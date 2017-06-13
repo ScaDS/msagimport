@@ -1,2 +1,1 @@
 # Guter Witz
-# Nicht
