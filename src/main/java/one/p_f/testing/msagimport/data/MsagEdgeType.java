@@ -19,10 +19,7 @@ package one.p_f.testing.msagimport.data;
  *
  * @author Johannes Leupold
  */
-public class MsagEdge {
-    private String fromNode;
-    private String toNode;
-    private MsagEdgeType type;
-
-    private String[] attributes;
+public enum MsagEdgeType {
+    AUTHOR_OF,
+    ;
 }

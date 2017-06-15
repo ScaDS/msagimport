@@ -23,4 +23,6 @@ public class MsagNode {
     private String key;
     private MsagNodeType type;
 
+    private String[] attributes;
+
 }
