@@ -48,6 +48,7 @@ public class SchemaParser {
                 continue;
             }
             if (currentLine.trim().equals("")) {
+                builder.setName(schemaName);
                 Schema newSchema = builder.build();
                 if (newSchema.getColumnCount() != 0) {
                     schemas.put(schemaName, newSchema);
@@ -63,6 +64,7 @@ public class SchemaParser {
                     .skip(1).collect(Collectors.joining());
             builder.addColumn(name);
         }
+        builder.setName(schemaName);
         Schema schema = builder.build();
         if (schema.getColumnCount() > 0 && schemaName != null) {
             schemas.put(schemaName, schema);

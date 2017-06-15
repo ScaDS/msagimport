@@ -31,9 +31,11 @@ public class Schema {
      */
     public static final class Builder {
 
+        private String schemaName;
         private final List<String> columns;
 
         public Builder() {
+            schemaName = null;
             columns = new ArrayList<>();
         }
 
@@ -41,18 +43,41 @@ public class Schema {
             columns.add(name);
         }
 
+        public void setName(String name) {
+            schemaName = name;
+        }
+
         public Schema build() {
-            return new Schema(columns.stream().toArray(String[]::new));
+            if (schemaName == null) {
+                throw new IllegalStateException();
+            }
+            return new Schema(schemaName,
+                    columns.stream().toArray(String[]::new));
         }
     }
+
+    /**
+     * Schema Name.
+     */
+    private final String schemaName;
 
     /**
      * Column names.
      */
     private final String[] columns;
 
-    public Schema(String... names) {
-        columns = (String[]) names;
+    public Schema(String schemaName, String... names) {
+        this.schemaName = schemaName;
+        this.columns = (String[]) names;
+    }
+
+    /**
+     * Get the Name of the Schema.
+     *
+     * @return the schemaName
+     */
+    public String getSchemaName() {
+        return schemaName;
     }
 
     /**
@@ -76,6 +101,6 @@ public class Schema {
 
     @Override
     public String toString() {
-        return Arrays.deepToString(columns);
+        return schemaName + ": " + Arrays.deepToString(columns);
     }
 }

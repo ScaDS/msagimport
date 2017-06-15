@@ -51,6 +51,8 @@ public class MsagImportMain {
         }
         FileSystem directory = dataLocation.getFileSystem();
         Map<String, Schema> schemas = SchemaParser.parse(schemaPath);
+        //schemas.values().stream().forEach(o -> System.out.println(o));
+
         ExecutorService exec = Executors.newFixedThreadPool(THREADS_MAX);
         for (String file : schemas.keySet()) {
             Path filePath = directory.getPath(dataLocation.toString(), file + ".txt");
