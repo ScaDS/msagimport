@@ -15,6 +15,8 @@
  */
 package one.p_f.testing.msagimport.data;
 
+import java.util.Arrays;
+
 /**
  *
  * @author p-f
@@ -55,5 +57,9 @@ public class MsagObject {
                     + field);
         }
         data[field] = newData;
+    }
+
+    public String toString() {
+        return Arrays.deepToString(data);
     }
 }
