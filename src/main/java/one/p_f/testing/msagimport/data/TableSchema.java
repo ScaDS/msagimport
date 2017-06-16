@@ -39,17 +39,20 @@ public class TableSchema {
             fieldNames = new ArrayList<>();
         }
 
-        public void setObjectType(ObjectType type) {
+        public Builder setObjectType(ObjectType type) {
             this.type = type;
+            return this;
         }
 
-        public void setSchemaName(String name) {
+        public Builder setSchemaName(String name) {
             schemaName = name;
+            return this;
         }
 
-        public void addField(FieldType type, String name) {
+        public Builder addField(FieldType type, String name) {
             fieldTypes.add(type);
             fieldNames.add(name);
+            return this;
         }
 
         public TableSchema build() {
