@@ -15,14 +15,12 @@
  */
 package one.p_f.testing.msagimport.callback;
 
-import one.p_f.testing.msagimport.data.MsagEdge;
-import one.p_f.testing.msagimport.data.MsagNode;
-
 /**
  *
  * @author Johannes Leupold
  */
+@FunctionalInterface
 public interface ElementProcessor {
-    void processNode(MsagNode node);
-    void processEdge(MsagEdge edge);
+
+    void process(MsagObject node);
 }
