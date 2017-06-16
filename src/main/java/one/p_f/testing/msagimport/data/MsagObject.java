@@ -1,0 +1,52 @@
+/*
+ * Copyright 2017 Philip Fritzsche <p-f@users.noreply.github.com>.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package one.p_f.testing.msagimport.data;
+
+/**
+ *
+ * @author p-f
+ */
+public class MsagObject {
+
+    private final TableSchema schema;
+
+    private final String[] data;
+
+    public MsagObject(TableSchema schema) {
+        this.schema = schema;
+        data = new String[schema.getFieldTypes().size()];
+    }
+
+    public TableSchema getSchema() {
+        return schema;
+    }
+
+    public String getFieldData(int field) {
+        if (field < 0 || field > data.length) {
+            throw new IllegalArgumentException("Illegal field number:  "
+                    + field);
+        }
+        return data[field];
+    }
+
+    public void setFieldData(int field, String newData) {
+        if (field < 0 || field > data.length) {
+            throw new IllegalArgumentException("Illegal field number:  "
+                    + field);
+        }
+        data[field] = newData;
+    }
+}
