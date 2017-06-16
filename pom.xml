@@ -14,7 +14,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>one.p_f.testing.msagimport.MsagImportMain</mainClass>
+                            <mainClass>one.p_f.testing.msagimport.ImportMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
