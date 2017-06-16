@@ -15,6 +15,8 @@
  */
 package one.p_f.testing.msagimport.callback;
 
+import one.p_f.testing.msagimport.data.MsagObject;
+
 /**
  *
  * @author Johannes Leupold

@@ -42,6 +42,13 @@ public class MsagObject {
         return data[field];
     }
 
+    public void setFieldData(String... fieldData) {
+        if (fieldData.length != data.length) {
+            throw new IllegalArgumentException("Wrong number of fields given");
+        }
+        System.arraycopy(fieldData, 0, data, 0, data.length);
+    }
+
     public void setFieldData(int field, String newData) {
         if (field < 0 || field > data.length) {
             throw new IllegalArgumentException("Illegal field number:  "
