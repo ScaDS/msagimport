@@ -91,16 +91,17 @@ public class ImportMain {
                 .addField(TableSchema.FieldType.ATTRIBUTE, 
                         "Field of study name")
                 .build();
-        files.put("FieldOfStudy", schema);
+        files.put("FieldsOfStudy", schema);
         
         schema = new TableSchema.Builder()
                 .setSchemaName("FieldOfStudyHierarchy")
                 .setObjectType(TableSchema.ObjectType.EDGE)
-                .addField(TableSchema.FieldType.KEY, "Child field of study ID")
+                .addField(TableSchema.FieldType.KEY,
+                        "FieldsOfStudy:Child field of study ID")
                 .addField(TableSchema.FieldType.ATTRIBUTE,
                         "Child field of study level")
                 .addField(TableSchema.FieldType.KEY,
-                        "Parent field of stufy ID")
+                        "FieldsOfStudy:Parent field of stufy ID")
                 .addField(TableSchema.FieldType.ATTRIBUTE,
                         "Parent field of study level")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Confidence")
@@ -133,8 +134,9 @@ public class ImportMain {
                         "Original venue name")
                 .addField(TableSchema.FieldType.IGNORE,
                         "Normalized venue name")
-                .addField(TableSchema.FieldType.KEY, "Journal ID")
-                .addField(TableSchema.FieldType.KEY, "Conference series ID")
+                .addField(TableSchema.FieldType.KEY, "Journals:Journal ID")
+                .addField(TableSchema.FieldType.KEY,
+                        "ConferenceSeries:Conference series ID")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Paper rank")
                 .build();
         files.put("Papers", schema);
@@ -142,9 +144,10 @@ public class ImportMain {
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperAuthorAffiliations")
                 .setObjectType(TableSchema.ObjectType.NODE)
-                .addField(TableSchema.FieldType.KEY, "Paper ID")
-                .addField(TableSchema.FieldType.KEY, "Author ID")
-                .addField(TableSchema.FieldType.KEY, "Affiliation ID")
+                .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
+                .addField(TableSchema.FieldType.KEY, "Authors:Author ID")
+                .addField(TableSchema.FieldType.KEY,
+                        "Affiliations:Affiliation ID")
                 .addField(TableSchema.FieldType.IGNORE,
                         "Original affiliation name")
                 .addField(TableSchema.FieldType.IGNORE,
@@ -157,24 +160,26 @@ public class ImportMain {
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperKeywords")
                 .setObjectType(TableSchema.ObjectType.EDGE)
-                .addField(TableSchema.FieldType.KEY, "Paper ID")
+                .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Keyword name")
-                .addField(TableSchema.FieldType.KEY, "Field of study ID")
+                .addField(TableSchema.FieldType.KEY,
+                        "FieldsOfStudy:Field of study ID")
                 .build();
         files.put("PaperKeywords", schema);
         
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperReferences")
                 .setObjectType(TableSchema.ObjectType.EDGE)
-                .addField(TableSchema.FieldType.KEY, "Paper ID")
-                .addField(TableSchema.FieldType.KEY, "Paper reference ID")
+                .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
+                .addField(TableSchema.FieldType.KEY,
+                        "Papers:Paper reference ID")
                 .build();
         files.put("PaperReferences", schema);
         
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperUrls")
                 .setObjectType(TableSchema.ObjectType.NODE)
-                .addField(TableSchema.FieldType.KEY, "Paper ID")
+                .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "URL")
                 .build();
         files.put("PaperUrls", schema);

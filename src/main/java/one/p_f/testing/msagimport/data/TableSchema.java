@@ -81,6 +81,8 @@ public class TableSchema {
         KEY,
         IGNORE
     }
+    
+    public static char SCOPE_SEPARATOR = ':';
 
     private TableSchema() {
     }
