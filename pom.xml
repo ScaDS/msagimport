@@ -5,6 +5,16 @@
     <artifactId>testing.msagimport</artifactId>
     <version>0.1</version>
     <packaging>jar</packaging>
+    <developers>
+        <developer>
+            <id>p-f</id>
+            <name>Philip Fritzsche</name>
+            <email>philipfritzsche@ymail.com</email>
+            <roles>
+                <role>Maintainer</role>
+            </roles>
+        </developer>
+    </developers>
     <build>
         <plugins>
             <plugin>
