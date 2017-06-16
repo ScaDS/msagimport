@@ -60,6 +60,6 @@ public class MsagObject {
     }
 
     public String toString() {
-        return Arrays.deepToString(data);
+        return schema.getType().toString() + ": " + Arrays.deepToString(data);
     }
 }
