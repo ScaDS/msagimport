@@ -32,6 +32,13 @@ import one.p_f.testing.msagimport.parse.TableFileParser;
 public class ImportMain {
 
     public static void main(String[] args) {
+        Path graphRoot = Paths.get(args.length == 0 ? "." : args[0]);
+        if( !graphRoot.toFile().isDirectory()) {
+            System.err.println("Graph root not found.");
+            System.out.println("Usage: ImportMain PATH");
+        }
+        String rootDir = graphRoot.toString();
+        
         Map<String, TableSchema> files = new TreeMap<>();
 
         TableSchema schema = new TableSchema.Builder()
@@ -41,7 +48,7 @@ public class ImportMain {
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Author name")
                 .build();
         files.put("Authors", schema);
-        
+
         schema = new TableSchema.Builder()
                 .setSchemaName("Affiliations")
                 .setObjectType(TableSchema.ObjectType.NODE)
@@ -49,7 +56,7 @@ public class ImportMain {
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Affiliation name")
                 .build();
         files.put("Affiliations", schema);
-        
+
         schema = new TableSchema.Builder()
                 .setSchemaName("ConferenceSeries")
                 .setObjectType(TableSchema.ObjectType.NODE)
@@ -57,8 +64,8 @@ public class ImportMain {
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Short name")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Full name")
                 .build();
-        files.put("ConferenceSeries", schema);
-        
+        files.put("Conferences", schema);
+
         schema = new TableSchema.Builder()
                 .setSchemaName("ConferenceInstances")
                 .setObjectType(TableSchema.ObjectType.NODE)
@@ -83,16 +90,16 @@ public class ImportMain {
                         "Conference final version due date")
                 .build();
         files.put("ConferenceInstances", schema);
-        
+
         schema = new TableSchema.Builder()
                 .setSchemaName("FieldsOfStudy")
                 .setObjectType(TableSchema.ObjectType.NODE)
                 .addField(TableSchema.FieldType.ID, "Field of study ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, 
+                .addField(TableSchema.FieldType.ATTRIBUTE,
                         "Field of study name")
                 .build();
         files.put("FieldsOfStudy", schema);
-        
+
         schema = new TableSchema.Builder()
                 .setSchemaName("FieldOfStudyHierarchy")
                 .setObjectType(TableSchema.ObjectType.EDGE)
@@ -107,7 +114,7 @@ public class ImportMain {
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Confidence")
                 .build();
         files.put("FieldOfStudyHierarchy", schema);
-        
+
         schema = new TableSchema.Builder()
                 .setSchemaName("Journals")
                 .setObjectType(TableSchema.ObjectType.NODE)
@@ -115,7 +122,7 @@ public class ImportMain {
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Journal name")
                 .build();
         files.put("Journals", schema);
-        
+
         schema = new TableSchema.Builder()
                 .setSchemaName("Papers")
                 .setObjectType(TableSchema.ObjectType.NODE)
@@ -140,7 +147,7 @@ public class ImportMain {
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Paper rank")
                 .build();
         files.put("Papers", schema);
-        
+
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperAuthorAffiliations")
                 .setObjectType(TableSchema.ObjectType.NODE)
@@ -156,7 +163,7 @@ public class ImportMain {
                         "Author sequence number")
                 .build();
         files.put("PaperAuthorAffiliations", schema);
-        
+
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperKeywords")
                 .setObjectType(TableSchema.ObjectType.EDGE)
@@ -166,7 +173,7 @@ public class ImportMain {
                         "FieldsOfStudy:Field of study ID")
                 .build();
         files.put("PaperKeywords", schema);
-        
+
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperReferences")
                 .setObjectType(TableSchema.ObjectType.EDGE)
@@ -175,7 +182,7 @@ public class ImportMain {
                         "Papers:Paper reference ID")
                 .build();
         files.put("PaperReferences", schema);
-        
+
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperUrls")
                 .setObjectType(TableSchema.ObjectType.NODE)
@@ -183,12 +190,14 @@ public class ImportMain {
                 .addField(TableSchema.FieldType.ATTRIBUTE, "URL")
                 .build();
         files.put("PaperUrls", schema);
-        
-        Path path = Paths.get(args[0], "Authors.txt");
-        TableFileParser parser = new TableFileParser(schema, path,
-                o -> System.out.println(o.toString()), 10);
+
         ExecutorService runner = Executors.newSingleThreadExecutor();
-        runner.submit(parser);
+        files.entrySet().stream().map((entry) ->
+                new TableFileParser(entry.getValue(),
+                    Paths.get(rootDir, entry.getKey() + ".txt"),
+                    o->System.out.println(o.toString())
+                    , 10))
+                .forEach(runner::submit);
         runner.shutdown();
     }
 }
