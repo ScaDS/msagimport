@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -81,7 +83,7 @@ public class TableSchema {
         KEY,
         IGNORE
     }
-    
+
     public static char SCOPE_SEPARATOR = ':';
 
     private TableSchema() {
@@ -121,5 +123,14 @@ public class TableSchema {
      */
     public List<String> getFieldNames() {
         return Collections.unmodifiableList(Arrays.asList(fieldNames));
+    }
+
+    @Override
+    public String toString() {
+        return type.toString() + ' ' + schemaName + ':'
+                + IntStream.range(0, fieldNames.length)
+                        .mapToObj(i -> fieldTypes[i].toString() + ' '
+                        + fieldNames[i])
+                        .collect(Collectors.joining(", "));
     }
 }
