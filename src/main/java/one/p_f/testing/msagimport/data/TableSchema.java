@@ -16,7 +16,6 @@
 package one.p_f.testing.msagimport.data;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,10 +63,8 @@ public class TableSchema {
             TableSchema schema = new TableSchema();
             schema.schemaName = schemaName;
             schema.type = type;
-            schema.fieldTypes = fieldTypes
-                    .toArray(new FieldType[fieldTypes.size()]);
-            schema.fieldNames = fieldNames
-                    .toArray(new String[fieldNames.size()]);
+            schema.fieldTypes = Collections.unmodifiableList(fieldTypes);
+            schema.fieldNames = Collections.unmodifiableList(fieldNames);
             return schema;
         }
     }
@@ -93,9 +90,9 @@ public class TableSchema {
 
     private ObjectType type;
 
-    private FieldType[] fieldTypes;
+    private List<FieldType> fieldTypes;
 
-    private String[] fieldNames;
+    private List<String> fieldNames;
 
     /**
      * @return the schemaName
@@ -115,22 +112,22 @@ public class TableSchema {
      * @return the fieldTypes
      */
     public List<FieldType> getFieldTypes() {
-        return Collections.unmodifiableList(Arrays.asList(fieldTypes));
+        return fieldTypes;
     }
 
     /**
      * @return the fieldNames
      */
     public List<String> getFieldNames() {
-        return Collections.unmodifiableList(Arrays.asList(fieldNames));
+        return fieldNames;
     }
 
     @Override
     public String toString() {
         return type.toString() + ' ' + schemaName + ':'
-                + IntStream.range(0, fieldNames.length)
-                        .mapToObj(i -> fieldTypes[i].toString() + ' '
-                        + fieldNames[i])
+                + IntStream.range(0, fieldNames.size())
+                        .mapToObj(i -> fieldTypes.get(i).toString() + ' '
+                        + fieldNames.get(i))
                         .collect(Collectors.joining(", "));
     }
 }
