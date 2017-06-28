@@ -71,13 +71,18 @@ public class TableSchema {
 
     public static enum ObjectType {
         NODE,
-        EDGE
+        EDGE,
+        EDGE_3,
+        MULTI_ATTRIBUTE
     }
 
     public static enum FieldType {
         ID,
         ATTRIBUTE,
+        ATTRIBUTE_1,
         KEY,
+        KEY_1,
+        KEY_2,
         IGNORE
     }
 

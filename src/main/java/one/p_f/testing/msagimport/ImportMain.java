@@ -151,16 +151,16 @@ public class ImportMain {
 
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperAuthorAffiliations")
-                .setObjectType(TableSchema.ObjectType.NODE)
-                .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
+                .setObjectType(TableSchema.ObjectType.EDGE_3)
+                .addField(TableSchema.FieldType.KEY_1, "Papers:Paper ID")
                 .addField(TableSchema.FieldType.KEY, "Authors:Author ID")
-                .addField(TableSchema.FieldType.KEY,
+                .addField(TableSchema.FieldType.KEY_2,
                         "Affiliations:Affiliation ID")
                 .addField(TableSchema.FieldType.IGNORE,
                         "Original affiliation name")
                 .addField(TableSchema.FieldType.IGNORE,
                         "Normalized affiliation name")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
+                .addField(TableSchema.FieldType.ATTRIBUTE_1,
                         "Author sequence number")
                 .build();
         files.put("PaperAuthorAffiliations", schema);
@@ -186,7 +186,7 @@ public class ImportMain {
 
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperUrls")
-                .setObjectType(TableSchema.ObjectType.NODE)
+                .setObjectType(TableSchema.ObjectType.MULTI_ATTRIBUTE)
                 .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "URL")
                 .build();
