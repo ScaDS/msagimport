@@ -69,7 +69,8 @@ public class ImportMain {
         schema = new TableSchema.Builder()
                 .setSchemaName("ConferenceInstances")
                 .setObjectType(TableSchema.ObjectType.NODE)
-                .addField(TableSchema.FieldType.KEY, "Conference series ID")
+                .addField(TableSchema.FieldType.KEY,
+                        "ConferenceSeries:Conference series ID")
                 .addField(TableSchema.FieldType.ID, "Conference instance ID")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Short name")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Full name")
