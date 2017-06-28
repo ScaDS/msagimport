@@ -15,9 +15,12 @@
  */
 package one.p_f.testing.msagimport.gradoop;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -27,6 +30,8 @@ import one.p_f.testing.msagimport.data.MsagObject;
 import one.p_f.testing.msagimport.data.TableSchema;
 import org.apache.log4j.Logger;
 import org.gradoop.common.model.impl.properties.Properties;
+import org.gradoop.common.util.GConstants;
+import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
 import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
 
 /**
@@ -40,25 +45,55 @@ public class GradoopElementProcessor implements ElementProcessor {
 
     private Map<String, TableSchema> graphSchema;
 
+    private final List<ImportVertex<String>> nodes;
+    private final List<ImportEdge<String>> edges;
+
     public GradoopElementProcessor(Set<TableSchema> schemata) {
         graphSchema = new TreeMap<>();
         schemata.iterator().forEachRemaining(t
                 -> graphSchema.put(t.getSchemaName(), t));
+        nodes = new ArrayList<>(20000);
+        edges = new ArrayList<>(20000);
     }
 
     @Override
-    public void process(MsagObject node) {
-        switch (node.getSchema().getType()) {
+    public void process(MsagObject obj) {
+        Properties prop;
+        switch (obj.getSchema().getType()) {
             case NODE:
-                Optional<String> id = getId(node);
+                Optional<String> id = getId(obj);
                 if (!id.isPresent()) {
-                    LOG.warn("No id present on " + node.toString());
+                    LOG.warn("No id present on " + obj.toString());
                     return;
                 }
-                Properties prop = convertAttributes(node);
+                prop = convertAttributes(obj);
                 ImportVertex<String> vertex = new ImportVertex<>(id.get(),
-                        node.getSchema().getSchemaName(), prop);
-                // what now?
+                        obj.getSchema().getSchemaName(), prop);
+
+                nodes.add(vertex);
+                getForeignKeys(obj).entrySet().stream()
+                        .map(e -> new ImportEdge<String>(id.get() + '|'
+                                + e.getValue(), id.get(), e.getValue()))
+                        .forEach(edges::add);
+                break;
+            case EDGE:
+                prop = convertAttributes(obj);
+                Map<TableSchema, String> keys = getForeignKeys(obj);
+                
+                if (keys.size() != 2) {
+                    LOG.warn("Malformed edge " + obj.toString());
+                }
+                
+                Iterator<Entry<TableSchema, String>> it = keys.entrySet()
+                        .iterator();
+                String source = it.next().getValue();
+                String target = it.next().getValue();
+                
+                ImportEdge<String> edge = new ImportEdge<>(source + '|' 
+                        + target, source, target, GConstants.DEFAULT_EDGE_LABEL, 
+                        prop);
+                
+                edges.add(edge);
                 break;
 
         }

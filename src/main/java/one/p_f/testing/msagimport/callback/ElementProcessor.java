@@ -24,5 +24,5 @@ import one.p_f.testing.msagimport.data.MsagObject;
 @FunctionalInterface
 public interface ElementProcessor {
 
-    void process(MsagObject node);
+    void process(MsagObject obj);
 }
