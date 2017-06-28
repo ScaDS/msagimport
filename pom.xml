@@ -14,6 +14,14 @@
                 <role>Maintainer</role>
             </roles>
         </developer>
+        <developer>
+            <id>jl57mufo</id>
+            <name>Johannes Leupold</name>
+            <email>johannes.leupold@studserv.uni-leipzig.de</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
     </developers>
     <build>
         <plugins>
