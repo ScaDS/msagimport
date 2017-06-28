@@ -75,7 +75,7 @@ public class GradoopElementProcessor implements ElementProcessor {
         List<String> fieldNames = obj.getSchema().getFieldNames();
         Map<TableSchema, String> keys = new TreeMap<>(Comparator
                 .comparing(TableSchema::getSchemaName));
-        for (int i = 1; i < types.size(); i++) {
+        for (int i = 0; i < types.size(); i++) {
             if (!types.get(i).equals(TableSchema.FieldType.KEY)) {
                 continue;
             }
