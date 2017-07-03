@@ -16,6 +16,7 @@
 package one.p_f.testing.msagimport.gradoop;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.IntStream;
 import one.p_f.testing.msagimport.callback.ElementProcessor;
@@ -52,7 +52,7 @@ public class GradoopElementProcessor implements ElementProcessor {
 
     private final Map<String, Properties> paperProp;
 
-    public GradoopElementProcessor(Set<TableSchema> schemata) {
+    public GradoopElementProcessor(Collection<TableSchema> schemata) {
         graphSchema = new TreeMap<>();
         schemata.iterator().forEachRemaining(t
                 -> graphSchema.put(t.getSchemaName(), t));
@@ -62,6 +62,14 @@ public class GradoopElementProcessor implements ElementProcessor {
         paperProp = new HashMap<>(20000);
     }
 
+    public List<ImportEdge<String>> getResultEdges() {
+        return edges;
+    }
+    
+    public List<ImportVertex<String>> getResultVertices()  {
+        return nodes;
+    }
+    
     @Override
     public void process(MsagObject obj) {
         switch (obj.getSchema().getType()) {
