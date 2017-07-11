@@ -54,6 +54,8 @@ public class TableFileParser implements Runnable {
 
     @Override
     public void run() {
+        Logger.getLogger(TableFileParser.class.getName())
+                .info("Running on " + source.toString());
         Stream<String> lines;
         try {
             lines = Files.lines(source);

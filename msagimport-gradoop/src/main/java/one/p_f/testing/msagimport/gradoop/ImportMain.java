@@ -18,22 +18,25 @@ package one.p_f.testing.msagimport.gradoop;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import one.p_f.testing.msagimport.data.TableSchema;
 import one.p_f.testing.msagimport.parse.TableFileParser;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.log4j.Logger;
 import org.gradoop.flink.io.api.DataSink;
 import org.gradoop.flink.io.api.DataSource;
 import org.gradoop.flink.io.impl.graph.GraphDataSource;
 import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
 import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
 import org.gradoop.flink.io.impl.json.JSONDataSink;
+import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.util.GradoopFlinkConfig;
 
 /**
@@ -44,7 +47,8 @@ public class ImportMain {
 
     private static final long PARSE_COUNT = 20000;
 
-    private static final Logger LOG = Logger.getLogger(ImportMain.class);
+    private static final Logger LOG = Logger
+            .getLogger(ImportMain.class.getName());
 
     public static void createGraphFrom(GradoopElementProcessor source,
             Path targetDir) {
@@ -59,16 +63,34 @@ public class ImportMain {
         DataSet<ImportEdge<String>> eDataSet = env.fromCollection(edges);
         DataSource graphSource = new GraphDataSource(vDataSet, eDataSet, cfg);
         DataSink sink = new JSONDataSink(targetDir.toString(), cfg);
+        String target = targetDir.toString() + "/";
+        LogicalGraph graph;
         try {
-            sink.write(graphSource.getLogicalGraph(), true);
+            graph = graphSource.getLogicalGraph();
         }
         catch (IOException ex) {
-            LOG.fatal("Failed to write graph.", ex);
+            LOG.log(Level.SEVERE, "Failed to create graph.", ex);
+            return;
+        }
+        try {
+            LOG.info("Writing graph");
+            sink.write(graph, true);
+        }
+        catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Failed to write graph.", ex);
+        }
+        try {
+            env.execute();
+        }
+        catch (Exception ex) {
+            LOG.finest("Hier könnte ihre Werbung stehen.");
+            throw new RuntimeException("Execution failed.", ex);
         }
 
     }
 
     public static void main(String[] args) {
+        System.err.println("Running with " + Arrays.toString(args));
         Path graphRoot = Paths.get(args.length == 0 ? "." : args[0]);
         if (!graphRoot.toFile().isDirectory()) {
             System.err.println("Graph root not found.");

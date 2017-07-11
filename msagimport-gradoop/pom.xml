@@ -39,6 +39,11 @@
             <artifactId>flink-java</artifactId>
             <version>1.1.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-clients_2.10</artifactId>
+            <version>1.1.2</version>
+        </dependency>
     </dependencies>
     <reporting>
         <plugins>
