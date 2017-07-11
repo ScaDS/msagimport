@@ -67,22 +67,19 @@ public class ImportMain {
         LogicalGraph graph;
         try {
             graph = graphSource.getLogicalGraph();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Failed to create graph.", ex);
             return;
         }
         try {
             LOG.info("Writing graph");
             sink.write(graph, true);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Failed to write graph.", ex);
         }
         try {
             env.execute();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LOG.finest("Hier könnte ihre Werbung stehen.");
             throw new RuntimeException("Execution failed.", ex);
         }
@@ -105,7 +102,9 @@ public class ImportMain {
         }
         String rootDir = graphRoot.toString();
 
-        Map<String, TableSchema> files = new TreeMap<>();
+        // Reverse the order to make sure papers are processed first.
+        Map<String, TableSchema> files
+                = new TreeMap<>((first, second) -> second.compareTo(first));
 
         TableSchema schema = new TableSchema.Builder()
                 .setSchemaName("Authors")
@@ -262,12 +261,13 @@ public class ImportMain {
                 = new GradoopElementProcessor(files.values());
 
         ExecutorService runner = Executors.newSingleThreadExecutor();
-        files.entrySet().stream().map((entry)
-                -> new TableFileParser(entry.getValue(),
-                        Paths.get(rootDir, entry.getKey() + ".txt"),
-                        processor,
-                        PARSE_COUNT))
-                .forEach(runner::submit);
+
+        for (Map.Entry<String, TableSchema> entry : files.entrySet()) {
+            runner.submit(new TableFileParser(schema,
+                    Paths.get(rootDir, entry.getKey() + ".txt"),
+                    processor, PARSE_COUNT));
+        }
+
         runner.submit(() -> ImportMain
                 .createGraphFrom(processor, outPath.toAbsolutePath()));
         runner.shutdown();
