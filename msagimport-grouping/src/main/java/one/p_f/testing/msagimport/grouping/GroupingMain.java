@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 TraderJoe95.
+ * Copyright 2017 Johannes Leupold.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
  */
 package one.p_f.testing.msagimport.grouping;
 
+import java.util.Collections;
 import org.gradoop.flink.io.api.DataSink;
 import org.gradoop.flink.io.api.DataSource;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.gradoop.flink.io.impl.json.JSONDataSource;
 import org.gradoop.flink.io.impl.dot.DOTDataSink;
 import org.gradoop.flink.model.impl.LogicalGraph;
+import org.gradoop.flink.model.impl.operators.grouping.Grouping;
 import org.gradoop.flink.util.GradoopFlinkConfig;
 
-import static java.util.Collections.singletonList;
-import static org.gradoop.flink.model.impl.operators.grouping.Grouping.LABEL_SYMBOL;
 
 /**
  * @author TraderJoe95
@@ -48,8 +48,9 @@ public class GroupingMain {
         LogicalGraph graph = dataSource.getLogicalGraph();
 
         // use graph grouping to extract the schema
-        LogicalGraph schema = graph.groupBy(singletonList(LABEL_SYMBOL),
-                singletonList(LABEL_SYMBOL));
+        LogicalGraph schema = graph.groupBy(
+                Collections.singletonList(Grouping.LABEL_SYMBOL),
+                Collections.singletonList(Grouping.LABEL_SYMBOL));
 
         // instantiate a data sink for the DOT format
         DataSink dataSink = new DOTDataSink(outputPath, false);
