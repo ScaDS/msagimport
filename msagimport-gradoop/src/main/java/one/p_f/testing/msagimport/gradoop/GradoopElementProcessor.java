@@ -65,11 +65,11 @@ public class GradoopElementProcessor implements ElementProcessor {
     public List<ImportEdge<String>> getResultEdges() {
         return edges;
     }
-    
-    public List<ImportVertex<String>> getResultVertices()  {
+
+    public List<ImportVertex<String>> getResultVertices() {
         return nodes;
     }
-    
+
     @Override
     public void process(MsagObject obj) {
         switch (obj.getSchema().getType()) {
@@ -115,32 +115,32 @@ public class GradoopElementProcessor implements ElementProcessor {
             }
             case EDGE_3: {
                 Properties propFirst = convertAttributesEdge3(obj, true);
-                Map<TableSchema, String> keysFirst = 
-                        getForeignKeysEdge3(obj, true);
-                
+                Map<TableSchema, String> keysFirst
+                        = getForeignKeysEdge3(obj, true);
+
                 Properties propSecond = convertAttributesEdge3(obj, false);
-                Map<TableSchema, String> keysSecond = 
-                        getForeignKeysEdge3(obj, false);
+                Map<TableSchema, String> keysSecond
+                        = getForeignKeysEdge3(obj, false);
 
                 if (keysFirst.size() != 2 || keysSecond.size() != 2) {
                     LOG.warn("Malformed multiedge " + obj.toString());
                 }
 
-                Iterator<Entry<TableSchema, String>> itFirst = 
-                        keysFirst.entrySet().iterator();
+                Iterator<Entry<TableSchema, String>> itFirst
+                        = keysFirst.entrySet().iterator();
                 String sourceFirst = itFirst.next().getValue();
                 String targetFirst = itFirst.next().getValue();
-                
-                Iterator<Entry<TableSchema, String>> itSecond = 
-                        keysSecond.entrySet().iterator();
+
+                Iterator<Entry<TableSchema, String>> itSecond
+                        = keysSecond.entrySet().iterator();
                 String sourceSecond = itSecond.next().getValue();
                 String targetSecond = itSecond.next().getValue();
 
-                ImportEdge<String> edgeFirst = new ImportEdge<>(sourceFirst 
-                        + '|' + targetFirst, sourceFirst, targetFirst, 
+                ImportEdge<String> edgeFirst = new ImportEdge<>(sourceFirst
+                        + '|' + targetFirst, sourceFirst, targetFirst,
                         GConstants.DEFAULT_EDGE_LABEL, propFirst);
-                ImportEdge<String> edgeSecond = new ImportEdge<>(sourceSecond 
-                        + '|' + targetSecond, sourceSecond, targetSecond, 
+                ImportEdge<String> edgeSecond = new ImportEdge<>(sourceSecond
+                        + '|' + targetSecond, sourceSecond, targetSecond,
                         GConstants.DEFAULT_EDGE_LABEL, propSecond);
 
                 edges.add(edgeFirst);
