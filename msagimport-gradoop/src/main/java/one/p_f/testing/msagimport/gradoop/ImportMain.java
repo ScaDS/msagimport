@@ -263,7 +263,7 @@ public class ImportMain {
         ExecutorService runner = Executors.newSingleThreadExecutor();
 
         for (Map.Entry<String, TableSchema> entry : files.entrySet()) {
-            runner.submit(new TableFileParser(schema,
+            runner.submit(new TableFileParser(entry.getValue(),
                     Paths.get(rootDir, entry.getKey() + ".txt"),
                     processor, PARSE_COUNT));
         }
