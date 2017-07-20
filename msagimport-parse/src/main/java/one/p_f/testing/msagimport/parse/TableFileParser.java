@@ -32,8 +32,14 @@ import one.p_f.testing.msagimport.data.TableSchema;
  */
 public class TableFileParser implements Runnable {
 
-    public static final int WIESO = -1;
+    /**
+     * In remembrance of issue 3.
+     */
+    protected static final int WIESO = -1;
 
+    /**
+     * Logger of this class.
+     */
     private static final Logger LOG
             = Logger.getLogger(TableFileParser.class.getName());
 
