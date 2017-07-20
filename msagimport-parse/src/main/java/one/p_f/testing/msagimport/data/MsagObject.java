@@ -16,12 +16,17 @@
 package one.p_f.testing.msagimport.data;
 
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author p-f
  */
 public class MsagObject {
+
+    private static final Logger LOG
+            = Logger.getLogger(MsagObject.class.getName());
 
     private final TableSchema schema;
 
@@ -38,6 +43,7 @@ public class MsagObject {
 
     public String getFieldData(int field) {
         if (field < 0 || field > data.length) {
+            LOG.log(Level.SEVERE, "Illegal field number: {0}", field);
             throw new IllegalArgumentException("Illegal field number:  "
                     + field);
         }
@@ -46,6 +52,9 @@ public class MsagObject {
 
     public void setFieldData(String... fieldData) {
         if (fieldData.length != data.length) {
+            LOG.log(Level.SEVERE, "Wrong number of fields given: {0}",
+                    fieldData.length != 0
+                            ? Arrays.deepToString(fieldData) : "<empty>");
             throw new IllegalArgumentException("Wrong number of fields given");
         }
         System.arraycopy(fieldData, 0, data, 0, data.length);
@@ -53,6 +62,7 @@ public class MsagObject {
 
     public void setFieldData(int field, String newData) {
         if (field < 0 || field > data.length) {
+            LOG.log(Level.SEVERE, "Illegal field number: {0}", field);
             throw new IllegalArgumentException("Illegal field number:  "
                     + field);
         }

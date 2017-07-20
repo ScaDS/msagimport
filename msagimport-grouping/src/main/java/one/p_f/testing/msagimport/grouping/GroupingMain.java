@@ -15,7 +15,10 @@
  */
 package one.p_f.testing.msagimport.grouping;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.logging.Logger;
 import org.gradoop.flink.io.api.DataSink;
 import org.gradoop.flink.io.api.DataSource;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -30,10 +33,22 @@ import org.gradoop.flink.util.GradoopFlinkConfig;
  * @author TraderJoe95
  */
 public class GroupingMain {
+    private static final Logger LOG = Logger
+            .getLogger(GroupingMain.class.getName());
 
     public static void main(final String[] args) throws Exception {
         String inputPath = args[0];
         String outputPath = args[1];
+        
+        Path outPath = Paths.get(outputPath);
+        if (outPath.toFile().isFile()) {
+            System.err.println("Output path is file.");
+            System.out.println("Usage: ImportMain INPATH OUTPATH");
+            return;
+        } else if (!outPath.toFile().exists()) {
+            LOG.info("Creating output directory " + outPath.toString());
+            outPath.toFile().mkdirs();
+        }
 
         ExecutionEnvironment env = ExecutionEnvironment
                 .getExecutionEnvironment();

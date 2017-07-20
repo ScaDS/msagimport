@@ -95,10 +95,13 @@ public class ImportMain {
             return;
         }
         Path outPath = Paths.get(args.length < 2 ? "." : args[1]);
-        if (!outPath.toFile().isDirectory()) {
-            System.err.println("Output path not found.");
+        if (outPath.toFile().isFile()) {
+            System.err.println("Output path is file.");
             System.out.println("Usage: ImportMain INPATH OUTPATH");
             return;
+        } else if (!outPath.toFile().exists()) {
+            LOG.info("Creating output directory " + outPath.toString());
+            outPath.toFile().mkdirs();
         }
         String rootDir = graphRoot.toString();
 
