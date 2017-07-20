@@ -35,3 +35,5 @@ java one.p_f.testing.msagimport.grouping.GroupingMain <input path> <output path>
 The **`input path`** should be the output path from step 1 (containing the JSON Files).
 
 The **`output path`** must be a directory and will contain the DOT output files. The directory will be created if it doesn't already exist.
+
+:beer::beer::beer:

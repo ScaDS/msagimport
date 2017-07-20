@@ -26,24 +26,51 @@ import one.p_f.testing.msagimport.data.MsagObject;
 import one.p_f.testing.msagimport.data.TableSchema;
 
 /**
+ * Parses a file using a given {@link TableSchema}.
  *
  * @author p-f
  */
 public class TableFileParser implements Runnable {
 
-    public static final int WIESO = -1;
+    /**
+     * In remembrance of issue 3.
+     */
+    protected static final int WIESO = -1;
 
+    /**
+     * Logger of this class.
+     */
     private static final Logger LOG
             = Logger.getLogger(TableFileParser.class.getName());
 
+    /**
+     * Maximum number of lines to parse.
+     */
     private final long maxParseCount;
 
+    /**
+     * The processor to handle the resulting {@link MsagObject}s.
+     */
     private final ElementProcessor processor;
 
+    /**
+     * The schema of the input file.
+     */
     private final TableSchema targetSchema;
 
+    /**
+     * Path of the imput file.
+     */
     private final Path source;
 
+    /**
+     * Initialize a parser.
+     *
+     * @param schema Schema of the input file.
+     * @param source Path of the input file.
+     * @param processor Processor to handle the resulting {@link MsagObject}s.
+     * @param maxCount Maximum number of lines to parse.
+     */
     public TableFileParser(TableSchema schema, Path source,
             ElementProcessor processor, long maxCount) {
         this.processor = processor;
@@ -52,6 +79,15 @@ public class TableFileParser implements Runnable {
         maxParseCount = maxCount;
     }
 
+    /**
+     * Same as {@link TableFileParser#TableFileParser( TableSchema, Path,
+     * ElementProcessor, long) TableFileParser(...)} but using
+     * {@link Long#MAX_VALUE} as maximum number of lines to parse.
+     *
+     * @param schema Schema of the input file.
+     * @param source Path of the input file.
+     * @param processor Processor to handle the resulting {@link MsagObject}s.
+     */
     public TableFileParser(TableSchema schema, Path source,
             ElementProcessor processor) {
         this(schema, source, processor, Long.MAX_VALUE);
@@ -71,10 +107,9 @@ public class TableFileParser implements Runnable {
         lines.limit(maxParseCount).map(line -> line.split("\\t", WIESO))
                 .map(split -> {
                     MsagObject obj = new MsagObject(targetSchema);
-            obj.setFieldData(split);
+                    obj.setFieldData(split);
                     return obj;
-                }).peek(e -> LOG.info("Parsed: " + e.toString()))
-                .forEach(processor::process);
+                }).forEach(processor::process);
     }
 
 }

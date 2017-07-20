@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Stores a record parsed from the input data and its schema.
  *
  * @author p-f
  */
@@ -28,19 +29,42 @@ public class MsagObject {
     private static final Logger LOG
             = Logger.getLogger(MsagObject.class.getName());
 
+    /**
+     * Schema of this object.
+     */
     private final TableSchema schema;
 
+    /**
+     * Column data of this record.
+     */
     private final String[] data;
 
+    /**
+     * Create an empty record.
+     *
+     * @param schema Schema of the new record.
+     */
     public MsagObject(TableSchema schema) {
         this.schema = schema;
         data = new String[schema.getFieldTypes().size()];
     }
 
+    /**
+     * Get the schema of this record.
+     *
+     * @return The schema.
+     */
     public TableSchema getSchema() {
         return schema;
     }
 
+    /**
+     * Get the data of a certain column of this record.
+     *
+     * @param field Column number.
+     * @return The cell data (or null, if not set).
+     * @throws IllegalArgumentException iff there is no such column.
+     */
     public String getFieldData(int field) {
         if (field < 0 || field > data.length) {
             LOG.log(Level.SEVERE, "Illegal field number: {0}", field);
@@ -50,6 +74,14 @@ public class MsagObject {
         return data[field];
     }
 
+    /**
+     * Set data of this record. Number of arguments must match the number of
+     * columns in this records {@link TableSchema}.
+     *
+     * @param fieldData Data to set.
+     * @throws IllegalArgumentException iff the number of arguments is
+     * incorrect.
+     */
     public void setFieldData(String... fieldData) {
         if (fieldData.length != data.length) {
             LOG.log(Level.SEVERE, "Wrong number of fields given: {0}",
@@ -60,6 +92,13 @@ public class MsagObject {
         System.arraycopy(fieldData, 0, data, 0, data.length);
     }
 
+    /**
+     * Set data of a certain column of this record.
+     * 
+     * @param field Number of the column to set.
+     * @param newData Data to put in the cell.
+     * @throws IllegalArgumentException iff the column number is not in range.
+     */
     public void setFieldData(int field, String newData) {
         if (field < 0 || field > data.length) {
             LOG.log(Level.SEVERE, "Illegal field number: {0}", field);
@@ -69,6 +108,7 @@ public class MsagObject {
         data[field] = newData;
     }
 
+    @Override
     public String toString() {
         return schema.getType().toString() + ' ' + schema.getSchemaName() + ':'
                 + Arrays.deepToString(data);

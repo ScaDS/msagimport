@@ -28,18 +28,30 @@ import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.grouping.Grouping;
 import org.gradoop.flink.util.GradoopFlinkConfig;
 
-
 /**
+ * Main class grouping the graph.
+ *
  * @author TraderJoe95
  */
 public class GroupingMain {
+
+    /**
+     * Logger of this class.
+     */
     private static final Logger LOG = Logger
             .getLogger(GroupingMain.class.getName());
 
+    /**
+     * Main method, reading the graph, grouping it, writing the result to disk.
+     *
+     * @param args Usage: INPUTPATH OUTPUTPATH
+     * @throws Exception I dont know ask the developer?
+     */
     public static void main(final String[] args) throws Exception {
+        // TODO: Improve argument handling.
         String inputPath = args[0];
         String outputPath = args[1];
-        
+
         Path outPath = Paths.get(outputPath);
         if (outPath.toFile().isFile()) {
             System.err.println("Output path is file.");
