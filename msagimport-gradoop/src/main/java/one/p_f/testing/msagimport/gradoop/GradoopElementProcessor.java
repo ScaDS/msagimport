@@ -17,12 +17,10 @@ package one.p_f.testing.msagimport.gradoop;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.IntStream;
@@ -87,54 +85,58 @@ public class GradoopElementProcessor implements ElementProcessor {
                         obj.getSchema().getSchemaName(), prop);
 
                 nodes.add(vertex);
-                getForeignKeys(obj).entrySet().stream()
+                LOG.info("Added Node: " + vertex.toString());
+
+                getForeignKeys(obj).stream()
                         .map(e -> new ImportEdge<String>(id.get() + '|'
-                                + e.getValue(), id.get(), e.getValue()))
+                                + e, id.get(), e))
                         .forEach(edges::add);
+
                 break;
             }
             case EDGE: {
                 Properties prop = convertAttributes(obj);
-                Map<TableSchema, String> keys = getForeignKeys(obj);
+                List<String> keys = getForeignKeys(obj);
 
-                if (keys.size() != 2) {
-                    LOG.warn("Malformed edge " + obj.toString());
+                if (keys.size() < 2) {
+                    LOG.warn("Malformed edge, not enough keys " + obj.toString());
+                }
+                if (keys.size() > 2) {
+                    LOG.warn("Malformed edge, too many keys " + obj.toString());
                 }
 
-                Iterator<Entry<TableSchema, String>> it = keys.entrySet()
-                        .iterator();
-                String source = it.next().getValue();
-                String target = it.next().getValue();
+                Iterator<String> it = keys.iterator();
+                String source = it.next();
+                String target = it.next();
 
                 ImportEdge<String> edge = new ImportEdge<>(source + '|'
                         + target, source, target, GConstants.DEFAULT_EDGE_LABEL,
                         prop);
 
                 edges.add(edge);
+                LOG.info("Added Edge: " + edge.toString());
                 break;
             }
             case EDGE_3: {
                 Properties propFirst = convertAttributesEdge3(obj, true);
-                Map<TableSchema, String> keysFirst
+                List<String> keysFirst
                         = getForeignKeysEdge3(obj, true);
 
                 Properties propSecond = convertAttributesEdge3(obj, false);
-                Map<TableSchema, String> keysSecond
+                List<String> keysSecond
                         = getForeignKeysEdge3(obj, false);
 
                 if (keysFirst.size() != 2 || keysSecond.size() != 2) {
                     LOG.warn("Malformed multiedge " + obj.toString());
                 }
 
-                Iterator<Entry<TableSchema, String>> itFirst
-                        = keysFirst.entrySet().iterator();
-                String sourceFirst = itFirst.next().getValue();
-                String targetFirst = itFirst.next().getValue();
+                Iterator<String> itFirst = keysFirst.iterator();
+                String sourceFirst = itFirst.next();
+                String targetFirst = itFirst.next();
 
-                Iterator<Entry<TableSchema, String>> itSecond
-                        = keysSecond.entrySet().iterator();
-                String sourceSecond = itSecond.next().getValue();
-                String targetSecond = itSecond.next().getValue();
+                Iterator<String> itSecond = keysSecond.iterator();
+                String sourceSecond = itSecond.next();
+                String targetSecond = itSecond.next();
 
                 ImportEdge<String> edgeFirst = new ImportEdge<>(sourceFirst
                         + '|' + targetFirst, sourceFirst, targetFirst,
@@ -144,18 +146,19 @@ public class GradoopElementProcessor implements ElementProcessor {
                         GConstants.DEFAULT_EDGE_LABEL, propSecond);
 
                 edges.add(edgeFirst);
+                LOG.info("Added Edge3 first: " + edgeFirst.toString());
                 edges.add(edgeSecond);
+                LOG.info("Added Edge3 second: " + edgeSecond.toString());
                 break;
             }
             case MULTI_ATTRIBUTE: {
-                Map<TableSchema, String> keys = getForeignKeys(obj);
+                List<String> keys = getForeignKeys(obj);
                 if (keys.size() != 1) {
                     LOG.warn("Malformed multi-attribute " + obj.toString());
                 }
 
-                Iterator<Entry<TableSchema, String>> it = keys.entrySet()
-                        .iterator();
-                String oid = it.next().getValue();
+                Iterator<String> it = keys.iterator();
+                String oid = it.next();
                 Properties prop = paperProp.get(oid);
                 if (!prop.containsKey(obj.getSchema().getSchemaName())) {
                     prop.set(obj.getSchema().getSchemaName(),
@@ -169,6 +172,8 @@ public class GradoopElementProcessor implements ElementProcessor {
 
                 prop.set(obj.getSchema().getSchemaName(), urlList);
 
+                LOG.info("Added Multi Attribute: " + urlList.toString());
+
                 break;
             }
 
@@ -181,11 +186,10 @@ public class GradoopElementProcessor implements ElementProcessor {
      * @param obj Object to get keys from.
      * @return A map storing table and id of the foreign object.
      */
-    private Map<TableSchema, String> getForeignKeys(MsagObject obj) {
+    private List<String> getForeignKeys(MsagObject obj) {
         List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
         List<String> fieldNames = obj.getSchema().getFieldNames();
-        Map<TableSchema, String> keys = new TreeMap<>(Comparator
-                .comparing(TableSchema::getSchemaName));
+        List<String> keys = new ArrayList<>();
         for (int i = 0; i < types.size(); i++) {
             if (!types.get(i).equals(TableSchema.FieldType.KEY)) {
                 continue;
@@ -201,7 +205,7 @@ public class GradoopElementProcessor implements ElementProcessor {
                 LOG.warn("Foreign key to unknown table: " + name[0]);
                 continue;
             }
-            keys.put(targetSchema, obj.getFieldData(i));
+            keys.add(obj.getFieldData(i));
         }
         return keys;
     }
@@ -213,12 +217,11 @@ public class GradoopElementProcessor implements ElementProcessor {
      * @param firstRun First or second edge
      * @return A map storing table and id of the foreign object.
      */
-    private Map<TableSchema, String> getForeignKeysEdge3(MsagObject obj,
+    private List<String> getForeignKeysEdge3(MsagObject obj,
             boolean firstRun) {
         List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
         List<String> fieldNames = obj.getSchema().getFieldNames();
-        Map<TableSchema, String> keys = new TreeMap<>(Comparator
-                .comparing(TableSchema::getSchemaName));
+        List<String> keys = new ArrayList<>();
         for (int i = 0; i < types.size(); i++) {
             if (!types.get(i).equals(TableSchema.FieldType.KEY)
                     && ((firstRun
@@ -238,7 +241,7 @@ public class GradoopElementProcessor implements ElementProcessor {
                 LOG.warn("Foreign key to unknown table: " + name[0]);
                 continue;
             }
-            keys.put(targetSchema, obj.getFieldData(i));
+            keys.add(obj.getFieldData(i));
         }
         return keys;
     }
