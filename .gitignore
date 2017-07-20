@@ -1,2 +1,7 @@
 *.log
 target
+
+# Eclipse Files
+.classpath
+.project
+org.eclipse.*
