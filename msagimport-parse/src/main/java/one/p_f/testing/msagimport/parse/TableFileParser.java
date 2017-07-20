@@ -31,6 +31,9 @@ import one.p_f.testing.msagimport.data.TableSchema;
  */
 public class TableFileParser implements Runnable {
 
+    private static final Logger LOG
+            = Logger.getLogger(TableFileParser.class.getName());
+
     private final long maxParseCount;
 
     private final ElementProcessor processor;
@@ -54,22 +57,22 @@ public class TableFileParser implements Runnable {
 
     @Override
     public void run() {
-        Logger.getLogger(TableFileParser.class.getName())
-                .info("Running on " + source.toString());
+        LOG.log(Level.INFO, "Running on {0}", source.toString());
         Stream<String> lines;
         try {
             lines = Files.lines(source);
-        } catch (IOException ex) {
-            Logger.getLogger(TableFileParser.class.getName())
-                    .log(Level.SEVERE, null, ex);
+        }
+        catch (IOException ex) {
+            LOG.log(Level.SEVERE, null, ex);
             return;
         }
-        lines.limit(maxParseCount).map(line->line.split("\\t"))
-                .map(split->{
+        lines.limit(maxParseCount).map(line -> line.split("\\t"))
+                .map(split -> {
                     MsagObject obj = new MsagObject(targetSchema);
-                    obj.setFieldData(split);
+            obj.setFieldData(split);
                     return obj;
-                }).forEach(processor::process);
+                }).peek(e -> LOG.info("Parsed: " + e.toString()))
+                .forEach(processor::process);
     }
-    
+
 }
