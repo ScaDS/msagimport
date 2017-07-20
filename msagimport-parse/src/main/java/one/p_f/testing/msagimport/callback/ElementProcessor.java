@@ -18,11 +18,17 @@ package one.p_f.testing.msagimport.callback;
 import one.p_f.testing.msagimport.data.MsagObject;
 
 /**
+ * Interface to be implemented by classes handling parsed {@link MsagObject}s.
  *
  * @author Johannes Leupold
  */
 @FunctionalInterface
 public interface ElementProcessor {
 
+    /**
+     * Handle a {@link MsagObject}.
+     * 
+     * @param obj Object to handle.
+     */
     void process(MsagObject obj);
 }
