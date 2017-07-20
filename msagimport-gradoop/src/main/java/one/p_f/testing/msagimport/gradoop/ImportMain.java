@@ -40,16 +40,30 @@ import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.util.GradoopFlinkConfig;
 
 /**
+ * Main class, parsing msag csv data to Gradoop JSON files.
  *
  * @author p-f
  */
 public class ImportMain {
 
+    /**
+     * Default maximum number of lines to parse.
+     */
     private static final long PARSE_COUNT = 20000;
 
+    /**
+     * Logger of this class.
+     */
     private static final Logger LOG = Logger
             .getLogger(ImportMain.class.getName());
 
+    /**
+     * Helper method for creating the graph from the
+     * {@link GradoopElementProcessor processor} storing it to disk.
+     *
+     * @param source Source processor.
+     * @param targetDir Output directory.
+     */
     public static void createGraphFrom(GradoopElementProcessor source,
             Path targetDir) {
         ExecutionEnvironment env = ExecutionEnvironment
@@ -67,25 +81,33 @@ public class ImportMain {
         LogicalGraph graph;
         try {
             graph = graphSource.getLogicalGraph();
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             LOG.log(Level.SEVERE, "Failed to create graph.", ex);
             return;
         }
         try {
             LOG.info("Writing graph");
             sink.write(graph, true);
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             LOG.log(Level.SEVERE, "Failed to write graph.", ex);
         }
         try {
             env.execute();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             LOG.finest("Hier könnte ihre Werbung stehen.");
             throw new RuntimeException("Execution failed.", ex);
         }
 
     }
 
+    /**
+     * Main method, reading the graph from disk, writing the result to disk.
+     * 
+     * @param args Usage: INPUTPATH OUTPUTPATH
+     */
     public static void main(String[] args) {
         System.err.println("Running with " + Arrays.toString(args));
         Path graphRoot = Paths.get(args.length == 0 ? "." : args[0]);

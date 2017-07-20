@@ -34,21 +34,44 @@ import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
 import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
 
 /**
+ * An {@link ElementProcessor} writing the graph to gradoop.
  *
  * @author p-f
  */
 public class GradoopElementProcessor implements ElementProcessor {
 
+    /**
+     * Logger of this class.
+     */
     private static final Logger LOG
             = Logger.getLogger(GradoopElementProcessor.class);
 
+    /**
+     * Mapping from schema name to schema used for performance.
+     */
     private Map<String, TableSchema> graphSchema;
 
+    /**
+     * List of result vertices.
+     */
     private final List<ImportVertex<String>> nodes;
+
+    /**
+     * List of result edges.
+     */
     private final List<ImportEdge<String>> edges;
 
+    /**
+     * Stores paper properties using their id. (Workaround for
+     * {@link TableSchema.ObjectType#MULTI_ATTRIBUTE}.
+     */
     private final Map<String, Properties> paperProp;
 
+    /**
+     * Initialize the processor with a set of {@link TableSchema schemata}.
+     *
+     * @param schemata Schemata used to resolve foreign keys.
+     */
     public GradoopElementProcessor(Collection<TableSchema> schemata) {
         graphSchema = new TreeMap<>();
         schemata.iterator().forEachRemaining(t
@@ -59,10 +82,20 @@ public class GradoopElementProcessor implements ElementProcessor {
         paperProp = new HashMap<>(20000);
     }
 
+    /**
+     * Get the resulting edges.
+     *
+     * @return A list of resulting edges.
+     */
     public List<ImportEdge<String>> getResultEdges() {
         return edges;
     }
 
+    /**
+     * Get the resulting vertices.
+     *
+     * @return A list of resulting vertices.
+     */
     public List<ImportVertex<String>> getResultVertices() {
         return nodes;
     }
@@ -88,9 +121,9 @@ public class GradoopElementProcessor implements ElementProcessor {
 
                 getForeignKeys(obj).stream()
                         .map(e -> new ImportEdge<String>(id.get() + '|'
-                                + e, id.get(), e.key, 
-                                obj.getSchema().getSchemaName() + "|" 
-                                        + e.scope))
+                        + e, id.get(), e.key,
+                        obj.getSchema().getSchemaName() + "|"
+                        + e.scope))
                         .forEach(edges::add);
 
                 break;
@@ -111,7 +144,7 @@ public class GradoopElementProcessor implements ElementProcessor {
                 String target = it.next().key;
 
                 ImportEdge<String> edge = new ImportEdge<>(source + '|'
-                        + target, source, target, 
+                        + target, source, target,
                         obj.getSchema().getSchemaName(),
                         prop);
 
@@ -216,7 +249,8 @@ public class GradoopElementProcessor implements ElementProcessor {
      * Get foreign keys of a {@link MsagObject}.
      *
      * @param obj Object to get keys from.
-     * @param firstRun First or second edge
+     * @param firstRun First or second edge in
+     * {@link TableSchema.ObjectType#EDGE_3}.
      * @return A map storing table and id of the foreign object.
      */
     private List<String> getForeignKeysEdge3(MsagObject obj,
@@ -268,7 +302,8 @@ public class GradoopElementProcessor implements ElementProcessor {
      * Convert {@link MsagObject}s attributes to {@link Properties}.
      *
      * @param obj Object to get attributes from.
-     * @param firstRun First or second edge
+     * @param firstRun First or second edge in
+     * {@link TableSchema.ObjectType#EDGE_3}.
      * @return {@link Properties} used in Gradoop.
      */
     private static Properties convertAttributesEdge3(MsagObject obj,
