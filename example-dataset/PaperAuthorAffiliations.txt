@@ -1,0 +1,6 @@
+01B27BE8	00001F05	0010A9BE	Universität Leipzig	universität leipzig	2
+027D0030	000025C5	0010A9BE	Universität Leipzig	universität leipzig	3
+7CFE299E	00002AD3	0010A9BE	Universität Leipzig	universität leipzig	1
+59BEBE1C	00014C3C	005D40FA	Grundschule Dresden	grundschule dresden	1
+5873C011	00016924	005D40FA	Grundschule Dresden	grundschule dresden	2
+5873C011	0000DF94	0040BAC6	Area 51	area 51	1

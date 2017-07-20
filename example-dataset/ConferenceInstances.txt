@@ -1,0 +1,8 @@
+42C0AB71	230B3CA6	DBS2 2017	DBS2 2017 : Datenbanksysteme II	Leipzig, Germany	http://www.dbs.de/2-17/	2017/05/23	2017/05/24		2016/12/19		
+42C0AB71	0AC780D0	DBS2 2016	DBS2 2016 : Datenbanksysteme II	Leipzig, Germany	http://www.dbs.de/2-16/	2016/05/11	2016/05/12		2015/12/19		
+42DBFEF6	0719147B	SWS 2015	SWS 2015 : Secure Web Services	Brisbane, Australia	http://www.sws2015.org/	2015/04/19	2015/04/24		2014/10/05	2015/01/14	2015/02/13
+42DBFEF6	08321474	SWS 2011	SWS 2011 : Secure Web Services	Vancouver, Canada	http://www.sws.com/2011/	2011/05/26	2011/05/30		2010/11/30	2011/02/18	2012/03/18
+42F4C8D1	02C389BB	SWT 2008	SWT 2008 : Softwaretechnik	Nashville, TN, USA	http://www.swt.cs.rice.edu/twiki/bin/view/GPCE08/WebHome	2008/10/19	2008/10/23	2008/05/12	2008/05/19	2008/06/30	
+44815780	236BD993	WSC 2015	WSC 2015 : Winter Skiing Conference	Jeju Island, South Korea	http://www.winter.or.kr	2015/08/20	2015/08/22		2015/06/20	2015/07/25	2015/08/01
+44ADC5A3	0C4CEB84	ACI 2010	ACI 2010 : Admin and Computer Interaction	Franschhoek, South Africa	http://www.admin.org/	2010/06/21	2010/06/23				
+44C9D190	23E3BC21	CCC 2011	CCC 2011 : Chaos Communication Congress	Texas, USA - United States of America		2011/03/09	2011/03/09		2010/09/10		

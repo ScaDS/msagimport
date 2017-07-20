@@ -1,0 +1,10 @@
+0010A9BE	universität leipzig
+001E3D1D	uni leipzig
+003EB1CB	nationale universität des kurfürstentum sachsen
+0040BAC6	area 51
+0041F649	massachusetts institute of technology
+004658F4	tokyo university
+0052BF56	kyoto university
+0052D95A	fukushima university
+0058C126	national institute of design
+005D40FA	grundschule dresden

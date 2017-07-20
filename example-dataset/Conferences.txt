@@ -1,0 +1,6 @@
+42C0AB71	DBS2	Datenbanksysteme II
+42DBFEF6	SWS	Secure Web Services
+42F4C8D1	SWT	Softwaretechnik
+44815780	WSC	Winter Skiing Conference
+44ADC5A3	ACI	Admin and Computer Interaction
+44C9D190	CCC	Chaos Communication Congress
