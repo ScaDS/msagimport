@@ -26,19 +26,40 @@ import one.p_f.testing.msagimport.data.MsagObject;
 import one.p_f.testing.msagimport.data.TableSchema;
 
 /**
+ * Parses a file using a given {@link TableSchema}.
  *
  * @author p-f
  */
 public class TableFileParser implements Runnable {
 
+    /**
+     * Maximum number of lines to parse.
+     */
     private final long maxParseCount;
 
+    /**
+     * The processor to handle the resulting {@link MsagObject}s.
+     */
     private final ElementProcessor processor;
 
+    /**
+     * The schema of the input file.
+     */
     private final TableSchema targetSchema;
 
+    /**
+     * Path of the imput file.
+     */
     private final Path source;
 
+    /**
+     * Initialize a parser.
+     *
+     * @param schema Schema of the input file.
+     * @param source Path of the input file.
+     * @param processor Processor to handle the resulting {@link MsagObject}s.
+     * @param maxCount Maximum number of lines to parse.
+     */
     public TableFileParser(TableSchema schema, Path source,
             ElementProcessor processor, long maxCount) {
         this.processor = processor;
@@ -47,6 +68,15 @@ public class TableFileParser implements Runnable {
         maxParseCount = maxCount;
     }
 
+    /**
+     * Same as {@link TableFileParser#TableFileParser( TableSchema, Path,
+     * ElementProcessor, long) TableFileParser(...)} but using
+     * {@link Long#MAX_VALUE} as maximum number of lines to parse.
+     *
+     * @param schema Schema of the input file.
+     * @param source Path of the input file.
+     * @param processor Processor to handle the resulting {@link MsagObject}s.
+     */
     public TableFileParser(TableSchema schema, Path source,
             ElementProcessor processor) {
         this(schema, source, processor, Long.MAX_VALUE);
@@ -59,17 +89,18 @@ public class TableFileParser implements Runnable {
         Stream<String> lines;
         try {
             lines = Files.lines(source);
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             Logger.getLogger(TableFileParser.class.getName())
                     .log(Level.SEVERE, null, ex);
             return;
         }
-        lines.limit(maxParseCount).map(line->line.split("\\t"))
-                .map(split->{
+        lines.limit(maxParseCount).map(line -> line.split("\\t"))
+                .map(split -> {
                     MsagObject obj = new MsagObject(targetSchema);
                     obj.setFieldData(split);
                     return obj;
                 }).forEach(processor::process);
     }
-    
+
 }

@@ -25,12 +25,19 @@ import one.p_f.testing.msagimport.data.TableSchema;
 import one.p_f.testing.msagimport.parse.TableFileParser;
 
 /**
+ * Parse msag data and dump it.
  *
  * @author p-f
+ * @deprecated Used for testing only.
  */
 @Deprecated
 public class ImportMain {
 
+    /**
+     * Main: Parse data.
+     * 
+     * @param args Single argument used as the graph root directory.
+     */
     public static void main(String[] args) {
         Path graphRoot = Paths.get(args.length == 0 ? "." : args[0]);
         if( !graphRoot.toFile().isDirectory()) {
