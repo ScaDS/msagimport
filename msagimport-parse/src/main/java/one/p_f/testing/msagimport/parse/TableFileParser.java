@@ -31,6 +31,8 @@ import one.p_f.testing.msagimport.data.TableSchema;
  */
 public class TableFileParser implements Runnable {
 
+    public static final int WIESO = -1;
+
     private static final Logger LOG
             = Logger.getLogger(TableFileParser.class.getName());
 
@@ -66,7 +68,7 @@ public class TableFileParser implements Runnable {
             LOG.log(Level.SEVERE, null, ex);
             return;
         }
-        lines.limit(maxParseCount).map(line -> line.split("\\t"))
+        lines.limit(maxParseCount).map(line -> line.split("\\t", WIESO))
                 .map(split -> {
                     MsagObject obj = new MsagObject(targetSchema);
             obj.setFieldData(split);
