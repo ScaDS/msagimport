@@ -24,14 +24,23 @@ import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.transformation.Transformation;
 
 /**
+ * Implements a graph transformation to convert semicolon separated attribute
+ * lists back to single attributes.
  *
  * @author TraderJoe95
  */
 public class SplitAttributes {
 
+    /**
+     * Transformation internally used.
+     */
     private Transformation trans;
 
+    /**
+     * Creates a new <code>SplitAttributes</code> instance.
+     */
     public SplitAttributes() {
+        // Function that splits the attribute list on vertices
         TransformationFunction<Vertex> vertexFunc = (c, t) -> {
             String joined = c.getProperties().get("attributes").getString();
 
@@ -44,6 +53,7 @@ public class SplitAttributes {
             return c;
         };
 
+        // Function that splits the attribute list on edges
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
             String joined = c.getProperties().get("attributes").getString();
 
@@ -59,6 +69,11 @@ public class SplitAttributes {
         trans = new Transformation(null, vertexFunc, edgeFunc);
     }
 
+    /**
+     * Executes transformation on <code>LogicalGraph</code>.
+     * @param graph input graph
+     * @return result of transformation
+     */
     public LogicalGraph execute(LogicalGraph graph) {
         return trans.execute(graph);
     }

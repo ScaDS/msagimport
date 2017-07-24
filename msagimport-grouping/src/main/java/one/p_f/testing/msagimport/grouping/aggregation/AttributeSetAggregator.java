@@ -22,13 +22,19 @@ import org.gradoop.common.model.impl.properties.PropertyValue;
 import org.gradoop.flink.model.impl.operators.grouping.functions.aggregation.PropertyValueAggregator;
 
 /**
+ * Aggregates semicolon separated attribute lists using a Set.
  *
  * @author TraderJoe95 <johannes.leupold@schie-le.de>
  */
 public class AttributeSetAggregator extends PropertyValueAggregator {
-
+    /**
+     * Set to aggregate property keys in.
+     */
     private HashSet<String> attributeSet;
 
+    /**
+     * Creates a new <code>AttributeSetAggregator</code>.
+     */
     public AttributeSetAggregator() {
         super("attributes", "attributes");
     }

@@ -25,14 +25,23 @@ import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.transformation.Transformation;
 
 /**
+ * Implements a graph transformation to all single attributes to one
+ * semicolon separated attribute list.
  *
  * @author TraderJoe95
  */
 public class JoinAttributes {
 
+    /**
+     * Transformation internally used.
+     */
     private Transformation trans;
 
+    /**
+     * Creates a new <code>JoinAttributes</code> instance.
+     */
     public JoinAttributes() {
+        // Function that joins the attribute list on vertices
         TransformationFunction<Vertex> vertexFunc = (c, t) -> {
             Iterable<String> keys = c.getPropertyKeys();
             String joined = StreamSupport.stream(keys.spliterator(), false)
@@ -45,6 +54,7 @@ public class JoinAttributes {
             return c;
         };
 
+        // Function that joins the attribute list on edges
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
             Iterable<String> keys = c.getPropertyKeys();
             String joined = StreamSupport.stream(keys.spliterator(), false)
@@ -60,6 +70,11 @@ public class JoinAttributes {
         trans = new Transformation(null, vertexFunc, edgeFunc);
     }
 
+    /**
+     * Executes transformation on <code>LogicalGraph</code>.
+     * @param graph input graph
+     * @return result of transformation
+     */
     public LogicalGraph execute(LogicalGraph graph) {
         return trans.execute(graph);
     }
