@@ -15,37 +15,24 @@
  */
 package one.p_f.testing.msagimport;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import one.p_f.testing.msagimport.data.TableSchema;
-import one.p_f.testing.msagimport.parse.TableFileParser;
 
 /**
- * Parse msag data and dump it.
+ * Helper class storing the format of the input csv files.
  *
  * @author p-f
- * @deprecated Used for testing only.
  */
-@Deprecated
-public class ImportMain {
+public final class InputSchema {
 
     /**
-     * Main: Parse data.
-     * 
-     * @param args Single argument used as the graph root directory.
+     * The format, as an immutable map.
      */
-    public static void main(String[] args) {
-        Path graphRoot = Paths.get(args.length == 0 ? "." : args[0]);
-        if( !graphRoot.toFile().isDirectory()) {
-            System.err.println("Graph root not found.");
-            System.out.println("Usage: ImportMain PATH");
-        }
-        String rootDir = graphRoot.toString();
-        
+    private static final Map<String, TableSchema> FORMAT;
+
+    static {
         Map<String, TableSchema> files = new TreeMap<>();
 
         TableSchema schema = new TableSchema.Builder()
@@ -199,13 +186,16 @@ public class ImportMain {
                 .build();
         files.put("PaperUrls", schema);
 
-        ExecutorService runner = Executors.newSingleThreadExecutor();
-        files.entrySet().stream().map((entry) ->
-                new TableFileParser(entry.getValue(),
-                    Paths.get(rootDir, entry.getKey() + ".txt"),
-                    o->System.out.println(o.toString())
-                    , 10))
-                .forEach(runner::submit);
-        runner.shutdown();
+        FORMAT = Collections.unmodifiableMap(files);
+    }
+
+    /**
+     * Get the input format as a map assigning a {@link TableSchema} to each
+     * file of the input data.
+     * 
+     * @return The format.
+     */
+    public static Map<String, TableSchema> get() {
+        return FORMAT;
     }
 }

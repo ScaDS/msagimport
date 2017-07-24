@@ -16,16 +16,18 @@
 package one.p_f.testing.msagimport.gradoop;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import one.p_f.testing.msagimport.InputSchema;
 import one.p_f.testing.msagimport.data.TableSchema;
 import one.p_f.testing.msagimport.parse.TableFileParser;
 import org.apache.flink.api.java.DataSet;
@@ -64,7 +66,7 @@ public class ImportMain {
      * @param source Source processor.
      * @param targetDir Output directory.
      */
-    public static void createGraphFrom(GradoopElementProcessor source,
+    private static void createGraphFrom(GradoopElementProcessor source,
             Path targetDir) {
         ExecutionEnvironment env = ExecutionEnvironment
                 .getExecutionEnvironment();
@@ -104,8 +106,34 @@ public class ImportMain {
     }
 
     /**
+     * Helper method to determine the parsing order of the input files.
+     *
+     * @param schema The schema to analyze.
+     * @return An interger to compare later.
+     */
+    private static int getParseOrder(TableSchema schema) {
+        switch (schema.getType()) {
+            case EDGE:
+                // Edges first.
+                return 0;
+            case EDGE_3:
+                // Multiedges next.
+                return 1;
+            case NODE:
+                // Nodes next.
+                return 2;
+            case MULTI_ATTRIBUTE:
+                // Attributes next.
+                return 3;
+            default:
+                // Every thing else.
+                return 4;
+        }
+    }
+
+    /**
      * Main method, reading the graph from disk, writing the result to disk.
-     * 
+     *
      * @param args Usage: INPUTPATH OUTPUTPATH
      */
     public static void main(String[] args) {
@@ -121,177 +149,27 @@ public class ImportMain {
             System.err.println("Output path is file.");
             System.out.println("Usage: ImportMain INPATH OUTPATH");
             return;
-        } else if (!outPath.toFile().exists()) {
+        } else if (!Files.exists(outPath)) {
             LOG.info("Creating output directory " + outPath.toString());
             outPath.toFile().mkdirs();
         }
         String rootDir = graphRoot.toString();
 
         // Reverse the order to make sure papers are processed first.
-        Map<String, TableSchema> files
-                = new TreeMap<>((first, second) -> second.compareTo(first));
-
-        TableSchema schema = new TableSchema.Builder()
-                .setSchemaName("Authors")
-                .setObjectType(TableSchema.ObjectType.NODE)
-                .addField(TableSchema.FieldType.ID, "Author ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Author name")
-                .build();
-        files.put("Authors", schema);
-
-        schema = new TableSchema.Builder()
-                .setSchemaName("Affiliations")
-                .setObjectType(TableSchema.ObjectType.NODE)
-                .addField(TableSchema.FieldType.ID, "Affiliation ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Affiliation name")
-                .build();
-        files.put("Affiliations", schema);
-
-        schema = new TableSchema.Builder()
-                .setSchemaName("ConferenceSeries")
-                .setObjectType(TableSchema.ObjectType.NODE)
-                .addField(TableSchema.FieldType.ID, "Conference series ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Short name")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Full name")
-                .build();
-        files.put("Conferences", schema);
-
-        schema = new TableSchema.Builder()
-                .setSchemaName("ConferenceInstances")
-                .setObjectType(TableSchema.ObjectType.NODE)
-                .addField(TableSchema.FieldType.KEY,
-                        "ConferenceSeries:Conference series ID")
-                .addField(TableSchema.FieldType.ID, "Conference instance ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Short name")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Full name")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Location")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Official conference URL")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference start date")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference end date")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference abstract registration date")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference submission deadline date")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference notification due date")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference final version due date")
-                .build();
-        files.put("ConferenceInstances", schema);
-
-        schema = new TableSchema.Builder()
-                .setSchemaName("FieldsOfStudy")
-                .setObjectType(TableSchema.ObjectType.NODE)
-                .addField(TableSchema.FieldType.ID, "Field of study ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Field of study name")
-                .build();
-        files.put("FieldsOfStudy", schema);
-
-        schema = new TableSchema.Builder()
-                .setSchemaName("FieldOfStudyHierarchy")
-                .setObjectType(TableSchema.ObjectType.EDGE)
-                .addField(TableSchema.FieldType.KEY,
-                        "FieldsOfStudy:Child field of study ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Child field of study level")
-                .addField(TableSchema.FieldType.KEY,
-                        "FieldsOfStudy:Parent field of stufy ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Parent field of study level")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Confidence")
-                .build();
-        files.put("FieldOfStudyHierarchy", schema);
-
-        schema = new TableSchema.Builder()
-                .setSchemaName("Journals")
-                .setObjectType(TableSchema.ObjectType.NODE)
-                .addField(TableSchema.FieldType.ID, "Journal ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Journal name")
-                .build();
-        files.put("Journals", schema);
-
-        schema = new TableSchema.Builder()
-                .setSchemaName("Papers")
-                .setObjectType(TableSchema.ObjectType.NODE)
-                .addField(TableSchema.FieldType.ID, "Paper ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Original paper title")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "Normalized paper title")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Paper publish year")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Paper publish date")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Paper Document Object Identifier")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "Original venue name")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "Normalized venue name")
-                .addField(TableSchema.FieldType.KEY, "Journals:Journal ID")
-                .addField(TableSchema.FieldType.KEY,
-                        "ConferenceSeries:Conference series ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Paper rank")
-                .build();
-        files.put("Papers", schema);
-
-        schema = new TableSchema.Builder()
-                .setSchemaName("PaperAuthorAffiliations")
-                .setObjectType(TableSchema.ObjectType.EDGE_3)
-                .addField(TableSchema.FieldType.KEY_1, "Papers:Paper ID")
-                .addField(TableSchema.FieldType.KEY, "Authors:Author ID")
-                .addField(TableSchema.FieldType.KEY_2,
-                        "Affiliations:Affiliation ID")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "Original affiliation name")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "Normalized affiliation name")
-                .addField(TableSchema.FieldType.ATTRIBUTE_1,
-                        "Author sequence number")
-                .build();
-        files.put("PaperAuthorAffiliations", schema);
-
-        schema = new TableSchema.Builder()
-                .setSchemaName("PaperKeywords")
-                .setObjectType(TableSchema.ObjectType.EDGE)
-                .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Keyword name")
-                .addField(TableSchema.FieldType.KEY,
-                        "FieldsOfStudy:Field of study ID")
-                .build();
-        files.put("PaperKeywords", schema);
-
-        schema = new TableSchema.Builder()
-                .setSchemaName("PaperReferences")
-                .setObjectType(TableSchema.ObjectType.EDGE)
-                .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
-                .addField(TableSchema.FieldType.KEY,
-                        "Papers:Paper reference ID")
-                .build();
-        files.put("PaperReferences", schema);
-
-        schema = new TableSchema.Builder()
-                .setSchemaName("PaperUrls")
-                .setObjectType(TableSchema.ObjectType.MULTI_ATTRIBUTE)
-                .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "URL")
-                .build();
-        files.put("PaperUrls", schema);
+        Map<String, TableSchema> files = InputSchema.get();
 
         GradoopElementProcessor processor
                 = new GradoopElementProcessor(files.values());
 
         ExecutorService runner = Executors.newSingleThreadExecutor();
 
-        for (Map.Entry<String, TableSchema> entry : files.entrySet()) {
-            runner.submit(new TableFileParser(entry.getValue(),
-                    Paths.get(rootDir, entry.getKey() + ".txt"),
-                    processor, PARSE_COUNT));
-        }
+        // Submit each tast ordered by the getParseOrder helper method.
+        files.entrySet().stream().sorted(Comparator
+                .comparingInt(e -> getParseOrder(e.getValue())))
+                .map(e -> new TableFileParser(e.getValue(),
+                Paths.get(rootDir, e.getKey() + ".txt"), processor,
+                PARSE_COUNT))
+                .forEach(runner::submit);
 
         runner.submit(() -> ImportMain
                 .createGraphFrom(processor, outPath.toAbsolutePath()));
