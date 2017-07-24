@@ -38,6 +38,8 @@ public class JoinAttributes {
             String joined = StreamSupport.stream(keys.spliterator(), false)
                     .collect(Collectors.joining(";"));
 
+            System.out.println(joined);
+            
             Properties p = new Properties();
             p.set("attributes", joined);
             c.setProperties(p);
@@ -50,6 +52,8 @@ public class JoinAttributes {
             String joined = StreamSupport.stream(keys.spliterator(), false)
                     .collect(Collectors.joining(";"));
 
+            System.out.println(joined);
+            
             Properties p = new Properties();
             p.set("attributes", joined);
             c.setProperties(p);
