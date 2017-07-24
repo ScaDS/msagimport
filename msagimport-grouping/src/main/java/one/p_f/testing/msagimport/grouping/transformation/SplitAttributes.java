@@ -37,7 +37,7 @@ public class SplitAttributes {
 
             Properties p = new Properties();
             Arrays.stream(joined.split(";")).filter(str -> !str.equals(""))
-                    .map(str -> str.replace("_", " ")).sequential()
+                    .map(str -> str.replace(" ", "_")).sequential()
                     .forEach(key -> p.set(key, "value"));
             c.setProperties(p);
 
@@ -49,7 +49,7 @@ public class SplitAttributes {
 
             Properties p = new Properties();
             Arrays.stream(joined.split(";")).filter(str -> !str.equals(""))
-                    .map(str -> str.replace("_", " ")).sequential()
+                    .map(str -> str.replace(" ", "_")).sequential()
                     .forEach(key -> p.set(key, "value"));
             c.setProperties(p);
 
