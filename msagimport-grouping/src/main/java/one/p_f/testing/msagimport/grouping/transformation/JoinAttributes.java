@@ -37,10 +37,10 @@ public class JoinAttributes {
             String joined = StreamSupport.stream(keys.spliterator(), false)
                     .collect(Collectors.joining(";"));
 
-            t.getPropertyKeys().forEach(key -> t.getProperties().remove(key));
-            t.setProperty("attributes", joined);
+            c.getPropertyKeys().forEach(key -> c.getProperties().remove(key));
+            c.setProperty("attributes", joined);
 
-            return t;
+            return c;
         };
 
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
@@ -48,10 +48,10 @@ public class JoinAttributes {
             String joined = StreamSupport.stream(keys.spliterator(), false)
                     .collect(Collectors.joining(";"));
 
-            t.getPropertyKeys().forEach(key -> t.getProperties().remove(key));
-            t.setProperty("attributes", joined);
+            c.getPropertyKeys().forEach(key -> c.getProperties().remove(key));
+            c.setProperty("attributes", joined);
 
-            return t;
+            return c;
         };
 
         trans = new Transformation(null, vertexFunc, edgeFunc);

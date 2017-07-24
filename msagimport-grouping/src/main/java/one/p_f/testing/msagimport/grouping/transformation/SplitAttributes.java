@@ -34,21 +34,21 @@ public class SplitAttributes {
         TransformationFunction<Vertex> vertexFunc = (c, t) -> {
             String joined = c.getProperties().get("attributes").getString();
 
-            t.getPropertyKeys().forEach(key -> t.getProperties().remove(key));
+            c.getPropertyKeys().forEach(key -> c.getProperties().remove(key));
             Arrays.stream(joined.split(";")).peek(System.out::println)
-                    .forEach(key -> t.setProperty(key, "value"));
+                    .forEach(key -> c.setProperty(key, "value"));
 
-            return t;
+            return c;
         };
 
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
             String joined = c.getProperties().get("attributes").getString();
 
-            t.getPropertyKeys().forEach(key -> t.getProperties().remove(key));
+            c.getPropertyKeys().forEach(key -> c.getProperties().remove(key));
             Arrays.stream(joined.split(";")).peek(System.out::println)
-                    .forEach(key -> t.setProperty(key, "value"));
+                    .forEach(key -> c.setProperty(key, "value"));
 
-            return t;
+            return c;
         };
 
         trans = new Transformation(null, vertexFunc, edgeFunc);
