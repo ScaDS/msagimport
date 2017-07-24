@@ -37,7 +37,7 @@ public class JoinAttributes {
             Iterable<String> keys = c.getPropertyKeys();
             String joined = StreamSupport.stream(keys.spliterator(), false)
                     .collect(Collectors.joining(";"));
-            
+
             Properties p = new Properties();
             p.set("attributes", joined);
             c.setProperties(p);
@@ -49,7 +49,7 @@ public class JoinAttributes {
             Iterable<String> keys = c.getPropertyKeys();
             String joined = StreamSupport.stream(keys.spliterator(), false)
                     .collect(Collectors.joining(";"));
-            
+
             Properties p = new Properties();
             p.set("attributes", joined);
             c.setProperties(p);

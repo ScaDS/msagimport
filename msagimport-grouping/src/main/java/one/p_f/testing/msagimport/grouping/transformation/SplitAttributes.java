@@ -36,8 +36,9 @@ public class SplitAttributes {
             String joined = c.getProperties().get("attributes").getString();
 
             Properties p = new Properties();
-            Arrays.stream(joined.split(";")).filter(str -> !str.equals("")).
-                    sequential().forEach(key -> p.set(key, "value"));
+            Arrays.stream(joined.split(";")).filter(str -> !str.equals(""))
+                    .map(str -> str.replace("_", " ")).sequential()
+                    .forEach(key -> p.set(key, "value"));
             c.setProperties(p);
 
             return c;
@@ -47,8 +48,9 @@ public class SplitAttributes {
             String joined = c.getProperties().get("attributes").getString();
 
             Properties p = new Properties();
-            Arrays.stream(joined.split(";")).filter(str -> !str.equals("")).
-                    sequential().forEach(key -> p.set(key, "value"));
+            Arrays.stream(joined.split(";")).filter(str -> !str.equals(""))
+                    .map(str -> str.replace("_", " ")).sequential()
+                    .forEach(key -> p.set(key, "value"));
             c.setProperties(p);
 
             return c;
