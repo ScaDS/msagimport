@@ -18,6 +18,7 @@ package one.p_f.testing.msagimport.grouping.transformation;
 import java.util.Arrays;
 import org.gradoop.common.model.impl.pojo.Edge;
 import org.gradoop.common.model.impl.pojo.Vertex;
+import org.gradoop.common.model.impl.properties.Properties;
 import org.gradoop.flink.model.api.functions.TransformationFunction;
 import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.transformation.Transformation;
@@ -34,9 +35,10 @@ public class SplitAttributes {
         TransformationFunction<Vertex> vertexFunc = (c, t) -> {
             String joined = c.getProperties().get("attributes").getString();
 
-            c.getPropertyKeys().forEach(key -> c.getProperties().remove(key));
-            Arrays.stream(joined.split(";")).peek(System.out::println)
-                    .forEach(key -> c.setProperty(key, "value"));
+            Properties p = new Properties();
+            Arrays.stream(joined.split(";")).sequential()
+                    .forEach(key -> p.set(key, "value"));
+            c.setProperties(p);
 
             return c;
         };
@@ -44,9 +46,10 @@ public class SplitAttributes {
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
             String joined = c.getProperties().get("attributes").getString();
 
-            c.getPropertyKeys().forEach(key -> c.getProperties().remove(key));
-            Arrays.stream(joined.split(";")).peek(System.out::println)
-                    .forEach(key -> c.setProperty(key, "value"));
+            Properties p = new Properties();
+            Arrays.stream(joined.split(";")).sequential()
+                    .forEach(key -> p.set(key, "value"));
+            c.setProperties(p);
 
             return c;
         };

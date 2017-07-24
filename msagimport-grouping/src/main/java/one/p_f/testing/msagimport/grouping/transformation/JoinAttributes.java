@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.gradoop.common.model.impl.pojo.Edge;
 import org.gradoop.common.model.impl.pojo.Vertex;
+import org.gradoop.common.model.impl.properties.Properties;
 import org.gradoop.flink.model.api.functions.TransformationFunction;
 import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.transformation.Transformation;
@@ -37,8 +38,9 @@ public class JoinAttributes {
             String joined = StreamSupport.stream(keys.spliterator(), false)
                     .collect(Collectors.joining(";"));
 
-            c.getPropertyKeys().forEach(key -> c.getProperties().remove(key));
-            c.setProperty("attributes", joined);
+            Properties p = new Properties();
+            p.set("attributes", joined);
+            c.setProperties(p);
 
             return c;
         };
@@ -48,8 +50,9 @@ public class JoinAttributes {
             String joined = StreamSupport.stream(keys.spliterator(), false)
                     .collect(Collectors.joining(";"));
 
-            c.getPropertyKeys().forEach(key -> c.getProperties().remove(key));
-            c.setProperty("attributes", joined);
+            Properties p = new Properties();
+            p.set("attributes", joined);
+            c.setProperties(p);
 
             return c;
         };
