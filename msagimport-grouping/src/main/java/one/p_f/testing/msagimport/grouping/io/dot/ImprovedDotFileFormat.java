@@ -16,11 +16,9 @@
 package one.p_f.testing.msagimport.grouping.io.dot;
 
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.gradoop.common.model.impl.pojo.Edge;
 import org.gradoop.common.model.impl.pojo.Vertex;
-import org.gradoop.common.model.impl.properties.Property;
 import org.gradoop.flink.io.impl.dot.functions.DOTFileFormat;
 import org.gradoop.flink.representation.transactional.GraphTransaction;
 
@@ -62,16 +60,18 @@ public class ImprovedDotFileFormat extends DOTFileFormat {
                     e.getSourceId().toString());
             String to = String.format("%c%s", NODE_PREFIX,
                     e.getTargetId().toString());
-            Stream<Property> propStream = e.getProperties() == null
-                    ? Stream.of()
-                    : StreamSupport
-                            .stream(e.getProperties().spliterator(), false);
-            String prop = propStream
+            if (e.getProperties() == null || e.getProperties().isEmpty()) {
+                sb.append(String.format("%s -> %s;%c", from, to, NL));
+                continue;
+            }
+            String prop = StreamSupport
+                    .stream(e.getProperties().spliterator(), false)
                     .map(f -> f.getKey() + ": " + f.getValue())
-                    .collect(Collectors.joining("\\n", "\"", "\""));
+                    .collect(Collectors.joining("\\l", "\"", "\\l\""));
             sb.append(String.format("%s%s [label=%s,shape=\"%s\"];%c",
                     from, to, prop, ATTR_SHAPE, NL));
-            sb.append(String.format("%s -> %s;%c", from, from + to, NL));
+            sb.append(String.format("%s -> %s [arrowhead=none];%c", from,
+                    from + to, NL));
             sb.append(String.format("%s -> %s;%c", from + to, to, NL));
         }
     }
@@ -82,16 +82,16 @@ public class ImprovedDotFileFormat extends DOTFileFormat {
             // Write vertex.
             sb.append(String.format("%c%s [label=\"%s\", shape=\"ellipse\"];%c",
                     NODE_PREFIX, id, v.getLabel(), NL));
-            Stream<Property> propStream = v.getProperties() == null
-                    ? Stream.of()
-                    : StreamSupport
-                            .stream(v.getProperties().spliterator(), false);
-            String prop = propStream
+            if (v.getProperties() == null) {
+                continue;
+            }
+            String prop = StreamSupport
+                    .stream(v.getProperties().spliterator(), false)
                     .map(f -> f.getKey() + ": " + f.getValue())
-                    .collect(Collectors.joining("\\n", "\"", "\""));
+                    .collect(Collectors.joining("\\l", "\"", "\\l\""));
             sb.append(String.format("%c%s_attr [label=%s,shape=\"%s\"];%c",
                     NODE_PREFIX, id, prop, ATTR_SHAPE, NL));
-            sb.append(String.format("%c%s -> %c%s_attr;%c", NODE_PREFIX, id,
+            sb.append(String.format("%c%s_attr -> %c%s [arrowhead=diamond];%c", NODE_PREFIX, id,
                     NODE_PREFIX, id, NL));
         }
     }
