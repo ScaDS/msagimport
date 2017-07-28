@@ -36,6 +36,8 @@ public class ImprovedDotFileFormat extends DOTFileFormat {
 
     private static final char ATTR_PREFIX = 'a';
 
+    private static final String ATTR_SHAPE = "rect";
+
     private static final char NODE_PREFIX = 'v';
 
     public ImprovedDotFileFormat() {
@@ -65,10 +67,10 @@ public class ImprovedDotFileFormat extends DOTFileFormat {
                     : StreamSupport
                             .stream(e.getProperties().spliterator(), false);
             String prop = propStream
-                    .map(f -> f.getKey() + " = " + f.getValue())
+                    .map(f -> f.getKey() + ": " + f.getValue())
                     .collect(Collectors.joining("\\n", "\"", "\""));
-            sb.append(String.format("%s%s [label=%s,shape=\"Msquare\"];%c",
-                    from, to, prop, NL));
+            sb.append(String.format("%s%s [label=%s,shape=\"%s\"];%c",
+                    from, to, prop, ATTR_SHAPE, NL));
             sb.append(String.format("%s -> %s;%c", from, from + to, NL));
             sb.append(String.format("%s -> %s;%c", from + to, to, NL));
         }
@@ -80,22 +82,17 @@ public class ImprovedDotFileFormat extends DOTFileFormat {
             // Write vertex.
             sb.append(String.format("%c%s [label=\"%s\", shape=\"ellipse\"];%c",
                     NODE_PREFIX, id, v.getLabel(), NL));
-            if (v.getProperties() == null) {
-                continue;
-            }
-            for (Property p : v.getProperties()) {
-                // Format property key.
-                String propKey = p.getKey().replaceAll("\\s+", "_");
-                String attrName = String.format("%c%s%c%s", NODE_PREFIX,
-                        id, ATTR_PREFIX, propKey);
-                // Write property.
-                sb.append(String
-                        .format("%s [label=\"%s = %s\", shape=\"rect\"];%c",
-                                attrName, propKey, p.getValue(), NL));
-                // Add edge vertex->property.
-                sb.append(String.format("%c%s -> %s;%c", NODE_PREFIX, id,
-                        attrName, NL));
-            }
+            Stream<Property> propStream = v.getProperties() == null
+                    ? Stream.of()
+                    : StreamSupport
+                            .stream(v.getProperties().spliterator(), false);
+            String prop = propStream
+                    .map(f -> f.getKey() + ": " + f.getValue())
+                    .collect(Collectors.joining("\\n", "\"", "\""));
+            sb.append(String.format("%c%s_attr [label=%s,shape=\"%s\"];%c",
+                    NODE_PREFIX, id, prop, ATTR_SHAPE, NL));
+            sb.append(String.format("%c%s -> %c%s_attr;%c", NODE_PREFIX, id,
+                    NODE_PREFIX, id, NL));
         }
     }
 }
