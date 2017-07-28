@@ -48,7 +48,7 @@ public class SplitAttributes {
             Arrays.stream(joined.split(";"))
                     .filter(str -> !str.startsWith(":") && !str.equals(""))
                     .map(str -> str.replace(" ", "_"))
-                    .map(str -> str.split(":")).sequential()
+                    .map(str -> str.split("@")).sequential()
                     .forEach(arr -> p.set(arr[0], arr[1]));
             c.setProperties(p);
 
