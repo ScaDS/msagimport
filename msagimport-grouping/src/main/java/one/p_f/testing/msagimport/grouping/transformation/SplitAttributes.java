@@ -59,6 +59,7 @@ public class SplitAttributes {
 
             Properties p = new Properties();
             Arrays.stream(joined.split(";")).filter(str -> !str.equals(""))
+                    .peek(System.out::println)
                     .map(str -> str.replace(" ", "_"))
                     .map(str -> str.split(":")).sequential()
                     .forEach(arr -> p.set(arr[0], arr[1]));
