@@ -134,7 +134,7 @@ public class ImportMain {
     /**
      * Main method, reading the graph from disk, writing the result to disk.
      *
-     * @param args Usage: INPUTPATH OUTPUTPATH
+     * @param args Usage: INPUTPATH OUTPUTPATH [COUNT]
      */
     public static void main(String[] args) {
         System.err.println("Running with " + Arrays.toString(args));
@@ -154,7 +154,10 @@ public class ImportMain {
             outPath.toFile().mkdirs();
         }
         String rootDir = graphRoot.toString();
-
+        
+        final long maxParseCount = args.length >= 3 ?
+                Long.parseLong(args[2]) : PARSE_COUNT;
+        
         // Reverse the order to make sure papers are processed first.
         Map<String, TableSchema> files = InputSchema.get();
 
@@ -168,7 +171,7 @@ public class ImportMain {
                 .comparingInt(e -> getParseOrder(e.getValue())))
                 .map(e -> new TableFileParser(e.getValue(),
                 Paths.get(rootDir, e.getKey() + ".txt"), processor,
-                PARSE_COUNT))
+                maxParseCount))
                 .forEach(runner::submit);
 
         runner.submit(() -> ImportMain
