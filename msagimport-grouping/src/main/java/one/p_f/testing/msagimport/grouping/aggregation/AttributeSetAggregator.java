@@ -52,7 +52,7 @@ public class AttributeSetAggregator extends PropertyValueAggregator {
     protected void initializeAggregate(PropertyValue in) {
         String str = in.getString();
         attributeSet = new HashSet<>(Arrays.asList(str.split(";")));
-
+        attributeCount = new HashMap<>();
         attributeSet.stream().forEach(a -> attributeCount.put(a, 1));
     }
 
