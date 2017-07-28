@@ -117,7 +117,7 @@ public class GradoopElementProcessor implements ElementProcessor {
                         obj.getSchema().getSchemaName(), prop);
 
                 nodes.add(vertex);
-                LOG.info("Added Node: " + vertex.toString());
+                LOG.debug("Added Node: " + vertex.toString());
 
                 getForeignKeys(obj).stream()
                         .map(e -> new ImportEdge<String>(id.get() + '|'
@@ -149,7 +149,7 @@ public class GradoopElementProcessor implements ElementProcessor {
                         prop);
 
                 edges.add(edge);
-                LOG.info("Added Edge: " + edge.toString());
+                LOG.debug("Added Edge: " + edge.toString());
                 break;
             }
             case EDGE_3: {
@@ -181,9 +181,9 @@ public class GradoopElementProcessor implements ElementProcessor {
                         obj.getSchema().getSchemaName() + "_2", propSecond);
 
                 edges.add(edgeFirst);
-                LOG.info("Added Edge3 first: " + edgeFirst.toString());
+                LOG.debug("Added Edge3 first: " + edgeFirst.toString());
                 edges.add(edgeSecond);
-                LOG.info("Added Edge3 second: " + edgeSecond.toString());
+                LOG.debug("Added Edge3 second: " + edgeSecond.toString());
                 break;
             }
             case MULTI_ATTRIBUTE: {
@@ -207,7 +207,7 @@ public class GradoopElementProcessor implements ElementProcessor {
 
                 prop.set(obj.getSchema().getSchemaName(), urlList);
 
-                LOG.info("Added Multi Attribute: " + urlList.toString());
+                LOG.debug("Added Multi Attribute: " + urlList.toString());
 
                 break;
             }
