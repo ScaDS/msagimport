@@ -45,9 +45,11 @@ public class SplitAttributes {
             String joined = c.getProperties().get("attributes").getString();
 
             Properties p = new Properties();
-            Arrays.stream(joined.split(";")).filter(str -> !str.equals(""))
-                    .map(str -> str.replace(" ", "_")).sequential()
-                    .forEach(key -> p.set(key, "value"));
+            Arrays.stream(joined.split(";"))
+                    .filter(str -> !str.startsWith("@") && !str.equals(""))
+                    .map(str -> str.replace(" ", "_"))
+                    .map(str -> str.split("@")).sequential()
+                    .forEach(arr -> p.set(arr[0], arr[1]));
             c.setProperties(p);
 
             return c;
@@ -58,9 +60,11 @@ public class SplitAttributes {
             String joined = c.getProperties().get("attributes").getString();
 
             Properties p = new Properties();
-            Arrays.stream(joined.split(";")).filter(str -> !str.equals(""))
-                    .map(str -> str.replace(" ", "_")).sequential()
-                    .forEach(key -> p.set(key, "value"));
+            Arrays.stream(joined.split(";"))
+                    .filter(str -> !str.startsWith("@") && !str.equals(""))
+                    .map(str -> str.replace(" ", "_"))
+                    .map(str -> str.split("@")).sequential()
+                    .forEach(arr -> p.set(arr[0], arr[1]));
             c.setProperties(p);
 
             return c;
@@ -71,6 +75,7 @@ public class SplitAttributes {
 
     /**
      * Executes transformation on <code>LogicalGraph</code>.
+     *
      * @param graph input graph
      * @return result of transformation
      */

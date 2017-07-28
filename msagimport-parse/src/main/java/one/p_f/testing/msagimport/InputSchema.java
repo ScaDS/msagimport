@@ -39,7 +39,7 @@ public final class InputSchema {
                 .setSchemaName("Authors")
                 .setObjectType(TableSchema.ObjectType.NODE)
                 .addField(TableSchema.FieldType.ID, "Author ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Author name")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "Name")
                 .build();
         files.put("Authors", schema);
 
@@ -47,7 +47,7 @@ public final class InputSchema {
                 .setSchemaName("Affiliations")
                 .setObjectType(TableSchema.ObjectType.NODE)
                 .addField(TableSchema.FieldType.ID, "Affiliation ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Affiliation name")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "Name")
                 .build();
         files.put("Affiliations", schema);
 
@@ -55,8 +55,8 @@ public final class InputSchema {
                 .setSchemaName("ConferenceSeries")
                 .setObjectType(TableSchema.ObjectType.NODE)
                 .addField(TableSchema.FieldType.ID, "Conference series ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Short name")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Full name")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "ShortName")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "FullName")
                 .build();
         files.put("Conferences", schema);
 
@@ -64,25 +64,22 @@ public final class InputSchema {
                 .setSchemaName("ConferenceInstances")
                 .setObjectType(TableSchema.ObjectType.NODE)
                 .addField(TableSchema.FieldType.KEY,
-                        "ConferenceSeries:Conference series ID")
+                        "ConferenceSeries:ConferenceSeriesID")
                 .addField(TableSchema.FieldType.ID, "Conference instance ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Short name")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Full name")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "ShortName")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "FullName")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Location")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "OfficialURL")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "StartDate")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "EndDate")
                 .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Official conference URL")
+                        "AbstractRegistrationDate")
                 .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference start date")
+                        "SubmissionDeadlineDate")
                 .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference end date")
+                        "NotificationDueDate")
                 .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference abstract registration date")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference submission deadline date")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference notification due date")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Conference final version due date")
+                        "FinalVersionDueDate")
                 .build();
         files.put("ConferenceInstances", schema);
 
@@ -90,8 +87,7 @@ public final class InputSchema {
                 .setSchemaName("FieldsOfStudy")
                 .setObjectType(TableSchema.ObjectType.NODE)
                 .addField(TableSchema.FieldType.ID, "Field of study ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Field of study name")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "Name")
                 .build();
         files.put("FieldsOfStudy", schema);
 
@@ -99,13 +95,13 @@ public final class InputSchema {
                 .setSchemaName("FieldOfStudyHierarchy")
                 .setObjectType(TableSchema.ObjectType.EDGE)
                 .addField(TableSchema.FieldType.KEY,
-                        "FieldsOfStudy:Child field of study ID")
+                        "FieldsOfStudy:ChildFieldOfStudyID")
                 .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Child field of study level")
+                        "ChildFieldOfStudyLevel")
                 .addField(TableSchema.FieldType.KEY,
-                        "FieldsOfStudy:Parent field of stufy ID")
+                        "FieldsOfStudy:ParentFieldOfStufyID")
                 .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Parent field of study level")
+                        "ParentFieldOfStudyLevel")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Confidence")
                 .build();
         files.put("FieldOfStudyHierarchy", schema);
@@ -114,7 +110,7 @@ public final class InputSchema {
                 .setSchemaName("Journals")
                 .setObjectType(TableSchema.ObjectType.NODE)
                 .addField(TableSchema.FieldType.ID, "Journal ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Journal name")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "Name")
                 .build();
         files.put("Journals", schema);
 
@@ -122,66 +118,56 @@ public final class InputSchema {
                 .setSchemaName("Papers")
                 .setObjectType(TableSchema.ObjectType.NODE)
                 .addField(TableSchema.FieldType.ID, "Paper ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Original paper title")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "Normalized paper title")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Paper publish year")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Paper publish date")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "Paper Document Object Identifier")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "Original venue name")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "Normalized venue name")
-                .addField(TableSchema.FieldType.KEY, "Journals:Journal ID")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "OriginalTitle")
+                .addField(TableSchema.FieldType.IGNORE, "NormalizedTitle")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "PublishYear")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "PublishDate")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "PaperDOI")
+                .addField(TableSchema.FieldType.IGNORE, "OriginalVenueName")
+                .addField(TableSchema.FieldType.IGNORE, "NormalizedVenueName")
+                .addField(TableSchema.FieldType.KEY, "Journals:JournalID")
                 .addField(TableSchema.FieldType.KEY,
-                        "ConferenceSeries:Conference series ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Paper rank")
+                        "ConferenceSeries:ConferenceSeriesID")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "PaperRank")
                 .build();
         files.put("Papers", schema);
 
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperAuthorAffiliations")
                 .setObjectType(TableSchema.ObjectType.EDGE_3)
-                .addField(TableSchema.FieldType.KEY_1, "Papers:Paper ID")
-                .addField(TableSchema.FieldType.KEY, "Authors:Author ID")
+                .addField(TableSchema.FieldType.KEY_1, "Papers:PaperID")
+                .addField(TableSchema.FieldType.KEY, "Authors:AuthorID")
                 .addField(TableSchema.FieldType.KEY_2,
-                        "Affiliations:Affiliation ID")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "Original affiliation name")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "Normalized affiliation name")
+                        "Affiliations:AffiliationID")
+                .addField(TableSchema.FieldType.IGNORE, "OriginalName")
+                .addField(TableSchema.FieldType.IGNORE, "NormalizedName")
                 .addField(TableSchema.FieldType.ATTRIBUTE_1,
-                        "Author sequence number")
+                        "AuthorSequenceNumber")
                 .build();
         files.put("PaperAuthorAffiliations", schema);
 
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperKeywords")
                 .setObjectType(TableSchema.ObjectType.EDGE)
-                .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE, "Keyword name")
+                .addField(TableSchema.FieldType.KEY, "Papers:PaperID")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "Name")
                 .addField(TableSchema.FieldType.KEY,
-                        "FieldsOfStudy:Field of study ID")
+                        "FieldsOfStudy:FieldOfStudyID")
                 .build();
         files.put("PaperKeywords", schema);
 
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperReferences")
                 .setObjectType(TableSchema.ObjectType.EDGE)
-                .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
-                .addField(TableSchema.FieldType.KEY,
-                        "Papers:Paper reference ID")
+                .addField(TableSchema.FieldType.KEY, "Papers:CitationID")
+                .addField(TableSchema.FieldType.KEY, "Papers:ReferenceID")
                 .build();
         files.put("PaperReferences", schema);
 
         schema = new TableSchema.Builder()
                 .setSchemaName("PaperUrls")
                 .setObjectType(TableSchema.ObjectType.MULTI_ATTRIBUTE)
-                .addField(TableSchema.FieldType.KEY, "Papers:Paper ID")
+                .addField(TableSchema.FieldType.KEY, "Papers:PaperID")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "URL")
                 .build();
         files.put("PaperUrls", schema);
@@ -192,7 +178,7 @@ public final class InputSchema {
     /**
      * Get the input format as a map assigning a {@link TableSchema} to each
      * file of the input data.
-     * 
+     *
      * @return The format.
      */
     public static Map<String, TableSchema> get() {

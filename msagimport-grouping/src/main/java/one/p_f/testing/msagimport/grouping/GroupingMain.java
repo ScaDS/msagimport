@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.logging.Logger;
+import one.p_f.testing.msagimport.grouping.io.dot.ImprovedDotDataSink;
 import one.p_f.testing.msagimport.grouping.aggregation.AttributeSetAggregator;
 import one.p_f.testing.msagimport.grouping.transformation.JoinAttributes;
 import one.p_f.testing.msagimport.grouping.transformation.SplitAttributes;
@@ -26,7 +27,6 @@ import org.gradoop.flink.io.api.DataSink;
 import org.gradoop.flink.io.api.DataSource;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.gradoop.flink.io.impl.json.JSONDataSource;
-import org.gradoop.flink.io.impl.dot.DOTDataSink;
 import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.grouping.Grouping;
 import org.gradoop.flink.model.impl.operators.grouping.GroupingStrategy;
@@ -97,7 +97,7 @@ public class GroupingMain {
         schema = splitter.execute(schema);
 
         // instantiate a data sink for the DOT format
-        DataSink dataSink = new DOTDataSink(outputPath, false);
+        DataSink dataSink = new ImprovedDotDataSink(outputPath, false);
         dataSink.write(schema, true);
 
         // run the job
