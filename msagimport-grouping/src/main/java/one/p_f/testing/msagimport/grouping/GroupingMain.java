@@ -19,11 +19,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.logging.Logger;
+import one.p_f.testing.msagimport.grouping.io.dot.ImprovedDotDataSink;
 import org.gradoop.flink.io.api.DataSink;
 import org.gradoop.flink.io.api.DataSource;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.gradoop.flink.io.impl.json.JSONDataSource;
-import org.gradoop.flink.io.impl.dot.DOTDataSink;
 import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.grouping.Grouping;
 import org.gradoop.flink.util.GradoopFlinkConfig;
@@ -80,7 +80,7 @@ public class GroupingMain {
                 Collections.singletonList(Grouping.LABEL_SYMBOL));
 
         // instantiate a data sink for the DOT format
-        DataSink dataSink = new DOTDataSink(outputPath, false);
+        DataSink dataSink = new ImprovedDotDataSink(outputPath, false);
         dataSink.write(schema, true);
 
         // run the job
