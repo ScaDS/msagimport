@@ -46,7 +46,7 @@ public class SplitAttributes {
 
             Properties p = new Properties();
             Arrays.stream(joined.split(";"))
-                    .filter(str -> !str.startsWith(":") && !str.equals(""))
+                    .filter(str -> !str.startsWith("@") && !str.equals(""))
                     .map(str -> str.replace(" ", "_"))
                     .map(str -> str.split("@")).sequential()
                     .forEach(arr -> p.set(arr[0], arr[1]));
@@ -61,7 +61,7 @@ public class SplitAttributes {
 
             Properties p = new Properties();
             Arrays.stream(joined.split(";"))
-                    .filter(str -> !str.startsWith(":") && !str.equals(""))
+                    .filter(str -> !str.startsWith("@") && !str.equals(""))
                     .map(str -> str.replace(" ", "_"))
                     .map(str -> str.split("@")).sequential()
                     .forEach(arr -> p.set(arr[0], arr[1]));
