@@ -1,0 +1,17 @@
+1
+therefor -> therefore
+wir extrahieren den schema graphen von dblp und mag, nicht nur von mag
+vll noch das grouping am ende explizit erwähnen
+2.2.4
+tsv -> andere off. bezeichnung
+3
+tsv siehe 2.2.4
+tableSchema Name ist nicht nach input file benannt, aber der map key ist
+The basic types are -> ":" fehlt
+on all primitive types (ID) / in all primitive types (IGNORE) -> such dir eins aus, aber einheitlich
+4.1.1
+Urls -> URLs
+4.1.3
+suffices -> suffixes
+5
+fertig schreiben
