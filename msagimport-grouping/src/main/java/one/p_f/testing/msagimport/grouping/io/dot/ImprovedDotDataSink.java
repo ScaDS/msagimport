@@ -30,14 +30,20 @@ import org.gradoop.flink.model.impl.GraphTransactions;
  */
 public class ImprovedDotDataSink extends DOTDataSink implements DataSink {
 
+    /**
+     * Path to write the data to.
+     */
     private final String path;
 
-    private final boolean graphInfo;
-
+    /**
+     * Initialize the sink.
+     *
+     * @param targetPath Path to write data to.
+     * @param graphInfo Ignored.
+     */
     public ImprovedDotDataSink(String targetPath, boolean graphInfo) {
         super(targetPath, graphInfo);
         path = targetPath;
-        this.graphInfo = graphInfo;
     }
 
     @Override
