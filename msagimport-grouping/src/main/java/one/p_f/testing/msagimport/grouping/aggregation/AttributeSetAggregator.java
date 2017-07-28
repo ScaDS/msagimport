@@ -45,7 +45,7 @@ public class AttributeSetAggregator extends PropertyValueAggregator {
 
     @Override
     protected boolean isInitialized() {
-        return attributeSet != null;
+        return attributeSet != null && !attributeSet.isEmpty();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class AttributeSetAggregator extends PropertyValueAggregator {
                 = new HashSet<>(Arrays.asList(str.split(";")));
         attributeSet.addAll(newAttributeSet);
         newAttributeSet.stream().forEach(a -> attributeCount.put(a,
-                attributeCount.getOrDefault(a, 1) + 1));
+                attributeCount.get(a) + 1));
     }
 
     @Override
