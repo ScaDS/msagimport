@@ -63,7 +63,7 @@ public class AttributeSetAggregator extends PropertyValueAggregator {
                 = new HashSet<>(Arrays.asList(str.split(";")));
         attributeSet.addAll(newAttributeSet);
         newAttributeSet.stream().forEach(a -> attributeCount.put(a,
-                attributeCount.get(a) + 1));
+                attributeCount.getOrDefault(a, 0) + 1));
     }
 
     @Override
