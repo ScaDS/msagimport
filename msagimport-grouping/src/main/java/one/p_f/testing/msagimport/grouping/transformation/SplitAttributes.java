@@ -64,6 +64,7 @@ public class SplitAttributes {
                     .map(str -> str.replace(" ", "_"))
                     .map(str -> str.split(":")).sequential()
                     .forEach(arr -> p.set(arr[0], arr[1]));
+            
             c.setProperties(p);
 
             return c;
