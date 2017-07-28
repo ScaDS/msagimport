@@ -70,7 +70,6 @@ public class AttributeSetAggregator extends PropertyValueAggregator {
     protected PropertyValue getAggregateInternal() {
         return PropertyValue.create(attributeSet.stream()
                 .map(a -> a + ":" + attributeCount.get(a))
-                .peek(System.out::println)
                 .collect(Collectors.joining(";")));
     }
 
