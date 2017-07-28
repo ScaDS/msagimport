@@ -16,6 +16,7 @@
 package one.p_f.testing.msagimport.grouping.aggregation;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 import org.gradoop.common.model.impl.properties.PropertyValue;
@@ -27,10 +28,13 @@ import org.gradoop.flink.model.impl.operators.grouping.functions.aggregation.Pro
  * @author TraderJoe95 <johannes.leupold@schie-le.de>
  */
 public class AttributeSetAggregator extends PropertyValueAggregator {
+
     /**
      * Set to aggregate property keys in.
      */
     private HashSet<String> attributeSet;
+
+    private HashMap<String, Integer> attributeCount;
 
     /**
      * Creates a new <code>AttributeSetAggregator</code>.
@@ -48,6 +52,8 @@ public class AttributeSetAggregator extends PropertyValueAggregator {
     protected void initializeAggregate(PropertyValue in) {
         String str = in.getString();
         attributeSet = new HashSet<>(Arrays.asList(str.split(";")));
+
+        attributeSet.stream().forEach(a -> attributeCount.put(a, 1));
     }
 
     @Override
@@ -56,11 +62,14 @@ public class AttributeSetAggregator extends PropertyValueAggregator {
         HashSet<String> newAttributeSet
                 = new HashSet<>(Arrays.asList(str.split(";")));
         attributeSet.addAll(newAttributeSet);
+        newAttributeSet.stream().forEach(a -> attributeCount.put(a,
+                attributeCount.get(a) + 1));
     }
 
     @Override
     protected PropertyValue getAggregateInternal() {
         return PropertyValue.create(attributeSet.stream()
+                .map(a -> a + ':' + attributeCount.get(a))
                 .collect(Collectors.joining(";")));
     }
 
@@ -68,6 +77,7 @@ public class AttributeSetAggregator extends PropertyValueAggregator {
     public void resetAggregate() {
         if (isInitialized()) {
             attributeSet.clear();
+            attributeCount.clear();
         }
     }
 
