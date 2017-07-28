@@ -69,14 +69,11 @@ public final class InputSchema {
                 .addField(TableSchema.FieldType.ATTRIBUTE, "ShortName")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "FullName")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "Location")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "OfficialURL")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "StartDate")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "EndDate")
                 .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "OfficialConferenceURL")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "ConferenceStartDate")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "ConferenceEndDate")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "ConferenceAbstractRegistrationDate")
+                        "AbstractRegistrationDate")
                 .addField(TableSchema.FieldType.ATTRIBUTE,
                         "SubmissionDeadlineDate")
                 .addField(TableSchema.FieldType.ATTRIBUTE,
@@ -121,17 +118,13 @@ public final class InputSchema {
                 .setSchemaName("Papers")
                 .setObjectType(TableSchema.ObjectType.NODE)
                 .addField(TableSchema.FieldType.ID, "Paper ID")
-                .addField(TableSchema.FieldType.ATTRIBUTE,
-                        "OriginalPaperTitle")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "NormalizedPaperTitle")
+                .addField(TableSchema.FieldType.ATTRIBUTE, "OriginalTitle")
+                .addField(TableSchema.FieldType.IGNORE, "NormalizedTitle")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "PublishYear")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "PublishDate")
                 .addField(TableSchema.FieldType.ATTRIBUTE, "PaperDOI")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "OriginalVenueName")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "NormalizedVenueName")
+                .addField(TableSchema.FieldType.IGNORE, "OriginalVenueName")
+                .addField(TableSchema.FieldType.IGNORE, "NormalizedVenueName")
                 .addField(TableSchema.FieldType.KEY, "Journals:JournalID")
                 .addField(TableSchema.FieldType.KEY,
                         "ConferenceSeries:ConferenceSeriesID")
@@ -146,10 +139,8 @@ public final class InputSchema {
                 .addField(TableSchema.FieldType.KEY, "Authors:AuthorID")
                 .addField(TableSchema.FieldType.KEY_2,
                         "Affiliations:AffiliationID")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "OriginalAffiliationName")
-                .addField(TableSchema.FieldType.IGNORE,
-                        "NormalizedAffiliationName")
+                .addField(TableSchema.FieldType.IGNORE, "OriginalName")
+                .addField(TableSchema.FieldType.IGNORE, "NormalizedName")
                 .addField(TableSchema.FieldType.ATTRIBUTE_1,
                         "AuthorSequenceNumber")
                 .build();
