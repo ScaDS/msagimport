@@ -39,25 +39,22 @@ public class AttributeCountAggregator extends PropertyValueAggregator {
      */
     public AttributeCountAggregator() {
         super("attributes", "attributes");
+        attributeCount = new HashMap<>();
     }
 
     @Override
     protected boolean isInitialized() {
-        return attributeCount != null && !attributeCount.isEmpty();
+        return true;
     }
 
     @Override
     protected void initializeAggregate(PropertyValue in) {
-        String str = in.getString();
-        attributeCount = new HashMap<>();
-        Arrays.asList(str.split(";")).stream()
-                .forEach(a -> attributeCount.put(a, 1));
     }
 
     @Override
     protected void aggregateInternal(PropertyValue in) {
         String str = in.getString();
-        Arrays.asList(str.split(";")).stream().forEach(a -> attributeCount
+        Arrays.stream(str.split(";")).forEach(a -> attributeCount
                 .put(a, attributeCount.getOrDefault(a, 0) + 1));
     }
 
@@ -72,9 +69,7 @@ public class AttributeCountAggregator extends PropertyValueAggregator {
 
     @Override
     public void resetAggregate() {
-        if (isInitialized()) {
-            attributeCount.clear();
-        }
+        attributeCount.clear();
     }
 
 }
