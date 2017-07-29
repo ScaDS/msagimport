@@ -16,6 +16,7 @@
 package one.p_f.testing.msagimport.grouping.io.dot;
 
 import java.util.Comparator;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.gradoop.common.model.impl.pojo.Edge;
@@ -97,7 +98,8 @@ public class ImprovedDotFileFormat extends DOTFileFormat {
                     .map(f -> f.getKey() + ": " + f.getValue())
                     .collect(Collectors.joining("\\l", "", "\\l"));
             sb.append(String.format("%s%s [label=\"{%s|%s}\",shape=record];%c",
-                    from, to, e.getLabel(), prop, NL));
+                    from, to, e.getLabel().replaceAll(Pattern.quote("|"),
+                            "\\|"), prop, NL));
             sb.append(String.format("%s -> %s [arrowhead=none];%c", from,
                     from + to, NL));
             sb.append(String.format("%s -> %s;%c", from + to, to, NL));
