@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import one.p_f.testing.msagimport.grouping.io.dot.ImprovedDotDataSink;
-import one.p_f.testing.msagimport.grouping.aggregation.AttributeCountAggregator;
+import one.p_f.testing.msagimport.grouping.aggregation.AttributeSumAggregator;
 import one.p_f.testing.msagimport.grouping.transformation.JoinAttributes;
 import one.p_f.testing.msagimport.grouping.transformation.SplitAttributes;
 import org.gradoop.flink.io.api.DataSink;
@@ -87,10 +87,10 @@ public class GroupingMain {
         graph = joiner.execute(graph);
 
         // use graph grouping to extract the schema
-        List<PropertyValueAggregator> vertexAgg = Arrays.asList(
-                new AttributeCountAggregator(), new CountAggregator());
-        List<PropertyValueAggregator> edgeAgg = Arrays.asList(
-                new AttributeCountAggregator(), new CountAggregator());
+        List<PropertyValueAggregator> vertexAgg = Arrays
+                .asList(new AttributeSumAggregator(), new CountAggregator());
+        List<PropertyValueAggregator> edgeAgg = Arrays
+                .asList(new AttributeSumAggregator(), new CountAggregator());
         LogicalGraph schema = graph.groupBy(
                 Collections.singletonList(Grouping.LABEL_SYMBOL),
                 vertexAgg,
