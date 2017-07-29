@@ -18,6 +18,7 @@ package one.p_f.testing.msagimport.grouping;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 import one.p_f.testing.msagimport.grouping.io.dot.ImprovedDotDataSink;
 import one.p_f.testing.msagimport.grouping.aggregation.AttributeCountAggregator;
@@ -30,6 +31,8 @@ import org.gradoop.flink.io.impl.json.JSONDataSource;
 import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.grouping.Grouping;
 import org.gradoop.flink.model.impl.operators.grouping.GroupingStrategy;
+import org.gradoop.flink.model.impl.operators.grouping.functions.aggregation.PropertyValueAggregator;
+import org.gradoop.flink.model.impl.operators.grouping.functions.aggregation.CountAggregator;
 import org.gradoop.flink.util.GradoopFlinkConfig;
 
 /**
@@ -83,13 +86,17 @@ public class GroupingMain {
         graph = joiner.execute(graph);
 
         // use graph grouping to extract the schema
-        AttributeCountAggregator vertexSetAgg = new AttributeCountAggregator();
-        AttributeCountAggregator edgeSetAgg = new AttributeCountAggregator();
+        List<PropertyValueAggregator> vertexAgg = Collections.emptyList();
+        vertexAgg.add(new AttributeCountAggregator());
+        vertexAgg.add(new CountAggregator());
+        List<PropertyValueAggregator> edgeAgg = Collections.emptyList();
+        edgeAgg.add(new AttributeCountAggregator());
+        edgeAgg.add(new CountAggregator());
         LogicalGraph schema = graph.groupBy(
                 Collections.singletonList(Grouping.LABEL_SYMBOL),
-                Collections.singletonList(vertexSetAgg),
+                vertexAgg,
                 Collections.singletonList(Grouping.LABEL_SYMBOL),
-                Collections.singletonList(edgeSetAgg),
+                edgeAgg,
                 GroupingStrategy.GROUP_REDUCE);
 
         // transform attribute list to attributes
