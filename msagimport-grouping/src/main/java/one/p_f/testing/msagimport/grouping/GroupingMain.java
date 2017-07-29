@@ -17,7 +17,7 @@ package one.p_f.testing.msagimport.grouping;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -87,12 +87,10 @@ public class GroupingMain {
         graph = joiner.execute(graph);
 
         // use graph grouping to extract the schema
-        List<PropertyValueAggregator> vertexAgg = new ArrayList<>();
-        vertexAgg.add(new AttributeCountAggregator());
-        vertexAgg.add(new CountAggregator());
-        List<PropertyValueAggregator> edgeAgg = new ArrayList<>();
-        edgeAgg.add(new AttributeCountAggregator());
-        edgeAgg.add(new CountAggregator());
+        List<PropertyValueAggregator> vertexAgg = Arrays.asList(
+                new AttributeCountAggregator(), new CountAggregator());
+        List<PropertyValueAggregator> edgeAgg = Arrays.asList(
+                new AttributeCountAggregator(), new CountAggregator());
         LogicalGraph schema = graph.groupBy(
                 Collections.singletonList(Grouping.LABEL_SYMBOL),
                 vertexAgg,
