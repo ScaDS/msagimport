@@ -16,6 +16,7 @@
 package one.p_f.testing.msagimport.grouping.transformation;
 
 import java.util.Arrays;
+import java.util.stream.StreamSupport;
 import org.gradoop.common.model.impl.pojo.Edge;
 import org.gradoop.common.model.impl.pojo.Vertex;
 import org.gradoop.common.model.impl.properties.Properties;
@@ -42,8 +43,8 @@ public class SplitAttributes {
     public SplitAttributes() {
         // Function that splits the attribute list on vertices
         TransformationFunction<Vertex> vertexFunc = (c, t) -> {
-            Properties p_old = c.getProperties();
-            String joined = p_old.get("attributes").getString();
+            Properties pOld = c.getProperties();
+            String joined = pOld.get("attributes").getString();
 
             Properties p = new Properties();
             Arrays.stream(joined.split(";"))
@@ -51,9 +52,9 @@ public class SplitAttributes {
                     .map(str -> str.replace(" ", "_"))
                     .map(str -> str.split("@")).sequential()
                     .forEach(arr -> p.set(arr[0], arr[1]));
-            p_old.getKeys().stream()
+            StreamSupport.stream(pOld.getKeys().spliterator(), false)
                     .filter(k -> !k.equals("attributes"))
-                    .forEach(k -> p.set(k, p_old.get(k)));
+                    .forEach(k -> p.set(k, pOld.get(k)));
             c.setProperties(p);
 
             return c;
@@ -61,8 +62,8 @@ public class SplitAttributes {
 
         // Function that splits the attribute list on edges
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
-            Properties p_old = c.getProperties();
-            String joined = p_old.get("attributes").getString();
+            Properties pOld = c.getProperties();
+            String joined = pOld.get("attributes").getString();
 
             Properties p = new Properties();
             Arrays.stream(joined.split(";"))
@@ -70,9 +71,9 @@ public class SplitAttributes {
                     .map(str -> str.replace(" ", "_"))
                     .map(str -> str.split("@")).sequential()
                     .forEach(arr -> p.set(arr[0], arr[1]));
-            p_old.getKeys().stream()
+            StreamSupport.stream(pOld.getKeys().spliterator(), false)
                     .filter(k -> !k.equals("attributes"))
-                    .forEach(k -> p.set(k, p_old.get(k)));
+                    .forEach(k -> p.set(k, pOld.get(k)));
             c.setProperties(p);
 
             return c;
