@@ -99,7 +99,7 @@ public class ImprovedDotFileFormat extends DOTFileFormat {
                     .collect(Collectors.joining("\\l", "", "\\l"));
             sb.append(String.format("%s%s [label=\"{%s|%s}\",shape=record];%c",
                     from, to, e.getLabel().replaceAll(Pattern.quote("|"),
-                            "\\|"), prop, NL));
+                            "\\\\|"), prop, NL));
             sb.append(String.format("%s -> %s [arrowhead=none];%c", from,
                     from + to, NL));
             sb.append(String.format("%s -> %s;%c", from + to, to, NL));
