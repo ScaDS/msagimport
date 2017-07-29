@@ -53,7 +53,7 @@ public class JoinAttributes {
             Map<PropertyValue, PropertyValue> joined = new HashMap<>();
             StreamSupport.stream(keys.spliterator(), false)
                     .forEach(a -> joined.put(PropertyValue.create(a),
-                            PropertyValue.create(1)));
+                            PropertyValue.create(1L)));
             Properties p = new Properties();
             p.set(propertyKey, joined);
             c.setProperties(p);
@@ -67,7 +67,7 @@ public class JoinAttributes {
             Map<PropertyValue, PropertyValue> joined = new HashMap<>();
             StreamSupport.stream(keys.spliterator(), false)
                     .forEach(a -> joined.put(PropertyValue.create(a),
-                            PropertyValue.create(1)));
+                            PropertyValue.create(1L)));
             Properties p = new Properties();
             p.set(propertyKey, joined);
             c.setProperties(p);

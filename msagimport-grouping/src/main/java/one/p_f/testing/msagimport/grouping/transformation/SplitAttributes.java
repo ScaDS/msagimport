@@ -53,7 +53,7 @@ public class SplitAttributes {
             joined.keySet().stream().sequential()
                     .filter((PropertyValue a) -> !a.getString().equals(""))
                     .forEach((PropertyValue a)
-                            -> p.set(a.getString(), joined.get(a).getInt()));
+                            -> p.set(a.getString(), joined.get(a).getLong()));
             StreamSupport.stream(pOld.getKeys().spliterator(), false)
                     .filter(k -> !k.equals(propertyKey))
                     .forEach(k -> p.set(k, pOld.get(k)));
@@ -71,7 +71,7 @@ public class SplitAttributes {
             joined.keySet().stream().sequential()
                     .filter((PropertyValue a) -> !a.getString().equals(""))
                     .forEach((PropertyValue a)
-                            -> p.set(a.getString(), joined.get(a).getInt()));
+                            -> p.set(a.getString(), joined.get(a).getLong()));
             StreamSupport.stream(pOld.getKeys().spliterator(), false)
                     .filter(k -> !k.equals(propertyKey))
                     .forEach(k -> p.set(k, pOld.get(k)));
