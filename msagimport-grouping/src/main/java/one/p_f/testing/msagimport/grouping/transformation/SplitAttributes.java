@@ -26,8 +26,8 @@ import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.transformation.Transformation;
 
 /**
- * Implements a graph transformation to convert semicolon separated attribute
- * lists back to single attributes.
+ * Implements a graph transformation to convert a map of attributes back to
+ * single attributes.
  *
  * @author TraderJoe95
  */
@@ -36,16 +36,18 @@ public class SplitAttributes {
     /**
      * Transformation internally used.
      */
-    private Transformation trans;
+    private final Transformation trans;
 
     /**
      * Creates a new <code>SplitAttributes</code> instance.
+     *
+     * @param propertyKey property key to access map
      */
-    public SplitAttributes() {
-        // Function that splits the attribute list on vertices
+    public SplitAttributes(String propertyKey) {
+        // Function that splits the attribute map on vertices
         TransformationFunction<Vertex> vertexFunc = (c, t) -> {
             Properties pOld = c.getProperties();
-            Map<PropertyValue, PropertyValue> joined = pOld.get("attributes")
+            Map<PropertyValue, PropertyValue> joined = pOld.get(propertyKey)
                     .getMap();
             Properties p = new Properties();
             joined.keySet().stream().sequential()
@@ -53,17 +55,17 @@ public class SplitAttributes {
                     .forEach((PropertyValue a)
                             -> p.set(a.getString(), joined.get(a).getInt()));
             StreamSupport.stream(pOld.getKeys().spliterator(), false)
-                    .filter(k -> !k.equals("attributes"))
+                    .filter(k -> !k.equals(propertyKey))
                     .forEach(k -> p.set(k, pOld.get(k)));
             c.setProperties(p);
 
             return c;
         };
 
-        // Function that splits the attribute list on edges
+        // Function that splits the attribute map on edges
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
             Properties pOld = c.getProperties();
-            Map<PropertyValue, PropertyValue> joined = pOld.get("attributes")
+            Map<PropertyValue, PropertyValue> joined = pOld.get(propertyKey)
                     .getMap();
             Properties p = new Properties();
             joined.keySet().stream().sequential()
@@ -71,7 +73,7 @@ public class SplitAttributes {
                     .forEach((PropertyValue a)
                             -> p.set(a.getString(), joined.get(a).getInt()));
             StreamSupport.stream(pOld.getKeys().spliterator(), false)
-                    .filter(k -> !k.equals("attributes"))
+                    .filter(k -> !k.equals(propertyKey))
                     .forEach(k -> p.set(k, pOld.get(k)));
             c.setProperties(p);
 

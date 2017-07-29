@@ -28,8 +28,9 @@ import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.transformation.Transformation;
 
 /**
- * Implements a graph transformation to all single attributes to one semicolon
- * separated attribute list.
+ * Implements a graph transformation to all single attributes to one attribute
+ * map. Every attribute is mapped to 1, enabling count aggregating with the
+ * {@link MapSumAggregator}.
  *
  * @author TraderJoe95
  */
@@ -38,13 +39,15 @@ public class JoinAttributes {
     /**
      * Transformation internally used.
      */
-    private Transformation trans;
+    private final Transformation trans;
 
     /**
      * Creates a new <code>JoinAttributes</code> instance.
+     *
+     * @param propertyKey property key to access map
      */
-    public JoinAttributes() {
-        // Function that joins the attribute list on vertices
+    public JoinAttributes(String propertyKey) {
+        // Function that joins the attributes on vertices
         TransformationFunction<Vertex> vertexFunc = (c, t) -> {
             Iterable<String> keys = c.getPropertyKeys();
             Map<PropertyValue, PropertyValue> joined = new HashMap<>();
@@ -52,13 +55,13 @@ public class JoinAttributes {
                     .forEach(a -> joined.put(PropertyValue.create(a),
                             PropertyValue.create(1)));
             Properties p = new Properties();
-            p.set("attributes", joined);
+            p.set(propertyKey, joined);
             c.setProperties(p);
 
             return c;
         };
 
-        // Function that joins the attribute list on edges
+        // Function that joins the attributes on edges
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
             Iterable<String> keys = c.getPropertyKeys();
             Map<PropertyValue, PropertyValue> joined = new HashMap<>();
@@ -66,7 +69,7 @@ public class JoinAttributes {
                     .forEach(a -> joined.put(PropertyValue.create(a),
                             PropertyValue.create(1)));
             Properties p = new Properties();
-            p.set("attributes", joined);
+            p.set(propertyKey, joined);
             c.setProperties(p);
 
             return c;

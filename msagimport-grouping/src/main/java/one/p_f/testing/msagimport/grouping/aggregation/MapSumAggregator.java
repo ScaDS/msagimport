@@ -21,23 +21,31 @@ import org.gradoop.common.model.impl.properties.PropertyValue;
 import org.gradoop.flink.model.impl.operators.grouping.functions.aggregation.PropertyValueAggregator;
 
 /**
- * Aggregates semicolon separated attribute lists using a Set.
+ * Aggregates corresponding values of maps.
  *
  * @author TraderJoe95 <johannes.leupold@schie-le.de>
  */
 public class MapSumAggregator extends PropertyValueAggregator {
 
     /**
-     * Map to aggregate property keys in.
+     * Class version for serialization.
      */
-    private HashMap<PropertyValue, PropertyValue> attributeCount;
+    private static final long serialVersionUID = 1L;
 
     /**
-     * Creates a new <code>AttributeSetAggregator</code>.
+     * Map to aggregate property keys in.
      */
-    public MapSumAggregator() {
-        super("attributes", "attributes");
-        attributeCount = new HashMap<>();
+    private final HashMap<PropertyValue, PropertyValue> aggregate;
+
+    /**
+     * Creates a new <code>MapSumAggregator</code>.
+     *
+     * @param propertyKey property key to access values
+     * @param aggregatePropertyKey property key for final aggregate value
+     */
+    public MapSumAggregator(String propertyKey, String aggregatePropertyKey) {
+        super(propertyKey, aggregatePropertyKey);
+        aggregate = new HashMap<>();
     }
 
     @Override
@@ -53,21 +61,58 @@ public class MapSumAggregator extends PropertyValueAggregator {
     protected void aggregateInternal(PropertyValue in) {
         Map<PropertyValue, PropertyValue> newAttributesMap = in.getMap();
         newAttributesMap.keySet().stream().forEach((PropertyValue a)
-                -> attributeCount.put(a, PropertyValue.create(
-                        attributeCount
-                        .getOrDefault(a, PropertyValue.create(0)).getInt()
-                        + newAttributesMap
-                        .getOrDefault(a, PropertyValue.create(0)).getInt())));
+                -> aggregate.put(a, addNumbers(newAttributesMap.get(a),
+                        aggregate.get(a))));
     }
 
     @Override
     protected PropertyValue getAggregateInternal() {
-        return PropertyValue.create(attributeCount);
+        return PropertyValue.create(aggregate);
     }
 
     @Override
     public void resetAggregate() {
-        attributeCount.clear();
+        aggregate.clear();
     }
 
+    /**
+     * Adds PropertyValues of the same {@link Number} type.
+     *
+     * @param a first value of sum, may use <code>null</code> as 0
+     * @param b second velue of sum, may use <code>null</code> as 0
+     * @return sum of a and b or <code>null</code> if both are <code>null</code>
+     */
+    private PropertyValue addNumbers(PropertyValue a, PropertyValue b) {
+        if (a == null && b == null) {
+            return null;
+        }
+        if (a == null) {
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
+        Number sum;
+        if (a.isInt()
+                && b.isInt()) {
+            sum = a.getInt() + b.getInt();
+        } else if (a.isLong()
+                && b.isLong()) {
+            sum = a.getLong() + b.getLong();
+        } else if (a.isFloat()
+                && b.isFloat()) {
+            sum = a.getFloat() + b.getFloat();
+        } else if (a.isDouble()
+                && b.isDouble()) {
+            sum = a.getDouble() + b.getDouble();
+        } else if (a.isBigDecimal()
+                && b.isBigDecimal()) {
+            sum = a.getBigDecimal().add(b.getBigDecimal());
+        } else {
+            throw new IllegalArgumentException(
+                    "Value types do not match or are not supported.");
+        }
+
+        return PropertyValue.create(sum);
+    }
 }
