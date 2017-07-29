@@ -15,11 +15,12 @@
  */
 package one.p_f.testing.msagimport.grouping.transformation;
 
-import java.util.Arrays;
+import java.util.Map;
 import java.util.stream.StreamSupport;
 import org.gradoop.common.model.impl.pojo.Edge;
 import org.gradoop.common.model.impl.pojo.Vertex;
 import org.gradoop.common.model.impl.properties.Properties;
+import org.gradoop.common.model.impl.properties.PropertyValue;
 import org.gradoop.flink.model.api.functions.TransformationFunction;
 import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.transformation.Transformation;
@@ -44,14 +45,13 @@ public class SplitAttributes {
         // Function that splits the attribute list on vertices
         TransformationFunction<Vertex> vertexFunc = (c, t) -> {
             Properties pOld = c.getProperties();
-            String joined = pOld.get("attributes").getString();
-
+            Map<PropertyValue, PropertyValue> joined = pOld.get("attributes")
+                    .getMap();
             Properties p = new Properties();
-            Arrays.stream(joined.split(";"))
-                    .filter(str -> !str.startsWith("@") && !str.equals(""))
-                    .map(str -> str.replace(" ", "_"))
-                    .map(str -> str.split("@")).sequential()
-                    .forEach(arr -> p.set(arr[0], arr[1]));
+            joined.keySet().stream().sequential()
+                    .filter((PropertyValue a) -> !a.getString().equals(""))
+                    .forEach((PropertyValue a)
+                            -> p.set(a.getString(), joined.get(a).getInt()));
             StreamSupport.stream(pOld.getKeys().spliterator(), false)
                     .filter(k -> !k.equals("attributes"))
                     .forEach(k -> p.set(k, pOld.get(k)));
@@ -63,14 +63,13 @@ public class SplitAttributes {
         // Function that splits the attribute list on edges
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
             Properties pOld = c.getProperties();
-            String joined = pOld.get("attributes").getString();
-
+            Map<PropertyValue, PropertyValue> joined = pOld.get("attributes")
+                    .getMap();
             Properties p = new Properties();
-            Arrays.stream(joined.split(";"))
-                    .filter(str -> !str.startsWith("@") && !str.equals(""))
-                    .map(str -> str.replace(" ", "_"))
-                    .map(str -> str.split("@")).sequential()
-                    .forEach(arr -> p.set(arr[0], arr[1]));
+            joined.keySet().stream().sequential()
+                    .filter((PropertyValue a) -> !a.getString().equals(""))
+                    .forEach((PropertyValue a)
+                            -> p.set(a.getString(), joined.get(a).getInt()));
             StreamSupport.stream(pOld.getKeys().spliterator(), false)
                     .filter(k -> !k.equals("attributes"))
                     .forEach(k -> p.set(k, pOld.get(k)));

@@ -15,18 +15,21 @@
  */
 package one.p_f.testing.msagimport.grouping.transformation;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.gradoop.common.model.impl.pojo.Edge;
 import org.gradoop.common.model.impl.pojo.Vertex;
 import org.gradoop.common.model.impl.properties.Properties;
+import org.gradoop.common.model.impl.properties.PropertyValue;
 import org.gradoop.flink.model.api.functions.TransformationFunction;
 import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.transformation.Transformation;
 
 /**
- * Implements a graph transformation to all single attributes to one
- * semicolon separated attribute list.
+ * Implements a graph transformation to all single attributes to one semicolon
+ * separated attribute list.
  *
  * @author TraderJoe95
  */
@@ -44,9 +47,10 @@ public class JoinAttributes {
         // Function that joins the attribute list on vertices
         TransformationFunction<Vertex> vertexFunc = (c, t) -> {
             Iterable<String> keys = c.getPropertyKeys();
-            String joined = StreamSupport.stream(keys.spliterator(), false)
-                    .collect(Collectors.joining(";"));
-
+            Map<PropertyValue, PropertyValue> joined = new HashMap<>();
+            StreamSupport.stream(keys.spliterator(), false)
+                    .forEach(a -> joined.put(PropertyValue.create(a),
+                            PropertyValue.create(1)));
             Properties p = new Properties();
             p.set("attributes", joined);
             c.setProperties(p);
@@ -57,9 +61,10 @@ public class JoinAttributes {
         // Function that joins the attribute list on edges
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
             Iterable<String> keys = c.getPropertyKeys();
-            String joined = StreamSupport.stream(keys.spliterator(), false)
-                    .collect(Collectors.joining(";"));
-
+            Map<PropertyValue, PropertyValue> joined = new HashMap<>();
+            StreamSupport.stream(keys.spliterator(), false)
+                    .forEach(a -> joined.put(PropertyValue.create(a),
+                            PropertyValue.create(1)));
             Properties p = new Properties();
             p.set("attributes", joined);
             c.setProperties(p);
@@ -72,6 +77,7 @@ public class JoinAttributes {
 
     /**
      * Executes transformation on <code>LogicalGraph</code>.
+     *
      * @param graph input graph
      * @return result of transformation
      */

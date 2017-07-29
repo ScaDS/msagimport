@@ -96,7 +96,7 @@ public class GroupingMain {
                 vertexAgg,
                 Collections.singletonList(Grouping.LABEL_SYMBOL),
                 edgeAgg,
-                GroupingStrategy.GROUP_REDUCE);
+                GroupingStrategy.GROUP_COMBINE);
 
         // transform attribute list to attributes
         SplitAttributes splitter = new SplitAttributes();

@@ -15,9 +15,8 @@
  */
 package one.p_f.testing.msagimport.grouping.aggregation;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.stream.Collectors;
+import java.util.Map;
 import org.gradoop.common.model.impl.properties.PropertyValue;
 import org.gradoop.flink.model.impl.operators.grouping.functions.aggregation.PropertyValueAggregator;
 
@@ -31,7 +30,7 @@ public class AttributeCountAggregator extends PropertyValueAggregator {
     /**
      * Map to aggregate property keys in.
      */
-    private HashMap<String, Integer> attributeCount;
+    private HashMap<PropertyValue, PropertyValue> attributeCount;
 
     /**
      * Creates a new <code>AttributeSetAggregator</code>.
@@ -52,16 +51,17 @@ public class AttributeCountAggregator extends PropertyValueAggregator {
 
     @Override
     protected void aggregateInternal(PropertyValue in) {
-        String str = in.getString();
-        Arrays.stream(str.split(";")).forEach(a -> attributeCount
-                .put(a, attributeCount.getOrDefault(a, 0) + 1));
+        Map<PropertyValue, PropertyValue> newAttributesMap = in.getMap();
+        newAttributesMap.keySet().stream().forEach((PropertyValue a)
+                -> attributeCount.put(a, PropertyValue.create(attributeCount
+                        .getOrDefault(a, PropertyValue.create(0)).getInt()
+                        + newAttributesMap
+                        .getOrDefault(a, PropertyValue.create(0)).getInt())));
     }
 
     @Override
     protected PropertyValue getAggregateInternal() {
-        return PropertyValue.create(attributeCount.keySet().stream()
-                .map(a -> a + "@" + attributeCount.get(a))
-                .collect(Collectors.joining(";")));
+        return PropertyValue.create(attributeCount);
     }
 
     @Override
