@@ -42,7 +42,8 @@ public class SplitAttributes {
     public SplitAttributes() {
         // Function that splits the attribute list on vertices
         TransformationFunction<Vertex> vertexFunc = (c, t) -> {
-            String joined = c.getProperties().get("attributes").getString();
+            Properties p_old = c.getProperties();
+            String joined = p_old.get("attributes").getString();
 
             Properties p = new Properties();
             Arrays.stream(joined.split(";"))
@@ -50,6 +51,9 @@ public class SplitAttributes {
                     .map(str -> str.replace(" ", "_"))
                     .map(str -> str.split("@")).sequential()
                     .forEach(arr -> p.set(arr[0], arr[1]));
+            p_old.getKeys().stream()
+                    .filter(k -> !k.equals("attributes"))
+                    .forEach(k -> p.set(k, p_old.get(k)));
             c.setProperties(p);
 
             return c;
@@ -57,7 +61,8 @@ public class SplitAttributes {
 
         // Function that splits the attribute list on edges
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
-            String joined = c.getProperties().get("attributes").getString();
+            Properties p_old = c.getProperties();
+            String joined = p_old.get("attributes").getString();
 
             Properties p = new Properties();
             Arrays.stream(joined.split(";"))
@@ -65,6 +70,9 @@ public class SplitAttributes {
                     .map(str -> str.replace(" ", "_"))
                     .map(str -> str.split("@")).sequential()
                     .forEach(arr -> p.set(arr[0], arr[1]));
+            p_old.getKeys().stream()
+                    .filter(k -> !k.equals("attributes"))
+                    .forEach(k -> p.set(k, p_old.get(k)));
             c.setProperties(p);
 
             return c;
