@@ -30,10 +30,8 @@ import org.gradoop.flink.model.impl.operators.grouping.functions.aggregation.Pro
 public class AttributeSetAggregator extends PropertyValueAggregator {
 
     /**
-     * Set to aggregate property keys in.
+     * Map to aggregate property keys in.
      */
-    private HashSet<String> attributeSet;
-
     private HashMap<String, Integer> attributeCount;
 
     /**
@@ -45,38 +43,36 @@ public class AttributeSetAggregator extends PropertyValueAggregator {
 
     @Override
     protected boolean isInitialized() {
-        return attributeSet != null && !attributeSet.isEmpty();
+        return attributeCount != null && !attributeCount.isEmpty();
     }
 
     @Override
     protected void initializeAggregate(PropertyValue in) {
         String str = in.getString();
-        attributeSet = new HashSet<>(Arrays.asList(str.split(";")));
         attributeCount = new HashMap<>();
-        attributeSet.stream().forEach(a -> attributeCount.put(a, 1));
+        Arrays.asList(str.split(";")).stream()
+                .forEach(a -> attributeCount.put(a, 1));
     }
 
     @Override
     protected void aggregateInternal(PropertyValue in) {
         String str = in.getString();
-        HashSet<String> newAttributeSet
-                = new HashSet<>(Arrays.asList(str.split(";")));
-        attributeSet.addAll(newAttributeSet);
-        newAttributeSet.stream().forEach(a -> attributeCount.put(a,
-                attributeCount.getOrDefault(a, 0) + 1));
+        Arrays.asList(str.split(";")).stream().forEach(a -> attributeCount
+                .put(a, attributeCount.getOrDefault(a, 0) + 1));
     }
 
     @Override
     protected PropertyValue getAggregateInternal() {
-        return PropertyValue.create(attributeSet.stream()
-                .map(a -> a + "@" + attributeCount.get(a))
+        HashSet<String> returnAttributeSet = new HashSet<>();
+        attributeCount.keySet().stream().forEach(a -> returnAttributeSet
+                .add(a + "@" + attributeCount.get(a)));
+        return PropertyValue.create(returnAttributeSet.stream()
                 .collect(Collectors.joining(";")));
     }
 
     @Override
     public void resetAggregate() {
         if (isInitialized()) {
-            attributeSet.clear();
             attributeCount.clear();
         }
     }
