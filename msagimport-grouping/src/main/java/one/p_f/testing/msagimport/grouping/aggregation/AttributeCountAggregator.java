@@ -17,7 +17,6 @@ package one.p_f.testing.msagimport.grouping.aggregation;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.stream.Collectors;
 import org.gradoop.common.model.impl.properties.PropertyValue;
 import org.gradoop.flink.model.impl.operators.grouping.functions.aggregation.PropertyValueAggregator;
@@ -60,10 +59,8 @@ public class AttributeCountAggregator extends PropertyValueAggregator {
 
     @Override
     protected PropertyValue getAggregateInternal() {
-        HashSet<String> returnAttributeSet = new HashSet<>();
-        attributeCount.keySet().stream().forEach(a -> returnAttributeSet
-                .add(a + "@" + attributeCount.get(a)));
-        return PropertyValue.create(returnAttributeSet.stream()
+        return PropertyValue.create(attributeCount.keySet().stream()
+                .map(a -> a + "@" + attributeCount.get(a))
                 .collect(Collectors.joining(";")));
     }
 
