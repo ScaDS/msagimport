@@ -294,6 +294,7 @@ public class GradoopElementProcessor implements ElementProcessor {
         List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
         IntStream.range(0, types.size()).filter(i
                 -> types.get(i).equals(TableSchema.FieldType.ATTRIBUTE))
+                .filter(i -> !obj.getFieldData(i).equals(""))
                 .forEach(i -> prop.set(names.get(i), obj.getFieldData(i)));
         return prop;
     }
@@ -317,6 +318,7 @@ public class GradoopElementProcessor implements ElementProcessor {
                 && types.get(i).equals(TableSchema.FieldType.ATTRIBUTE_1))
                 || (!firstRun
                 && types.get(i).equals(TableSchema.FieldType.KEY_1))))
+                .filter(i -> !obj.getFieldData(i).equals(""))
                 .forEach(i -> prop.set(names.get(i), obj.getFieldData(i)));
         return prop;
     }
