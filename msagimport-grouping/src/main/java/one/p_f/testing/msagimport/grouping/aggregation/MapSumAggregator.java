@@ -25,7 +25,7 @@ import org.gradoop.flink.model.impl.operators.grouping.functions.aggregation.Pro
  *
  * @author TraderJoe95 <johannes.leupold@schie-le.de>
  */
-public class AttributeSumAggregator extends PropertyValueAggregator {
+public class MapSumAggregator extends PropertyValueAggregator {
 
     /**
      * Map to aggregate property keys in.
@@ -35,7 +35,7 @@ public class AttributeSumAggregator extends PropertyValueAggregator {
     /**
      * Creates a new <code>AttributeSetAggregator</code>.
      */
-    public AttributeSumAggregator() {
+    public MapSumAggregator() {
         super("attributes", "attributes");
         attributeCount = new HashMap<>();
     }
