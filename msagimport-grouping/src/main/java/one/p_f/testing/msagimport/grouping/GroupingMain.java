@@ -82,16 +82,16 @@ public class GroupingMain {
         // load the graph
         LogicalGraph graph = dataSource.getLogicalGraph();
 
-        // transform attributes to attributes map
+        // transform attributes to attributes maps
         JoinAttributes joiner = new JoinAttributes("attributes");
         graph = joiner.execute(graph);
 
         // use graph grouping to extract the schema
         List<PropertyValueAggregator> vertexAgg = Arrays
-                .asList(new MapSumAggregator("attributes", "attributes"),
+                .asList(new MapSumAggregator("attributes", "attributesAgg"),
                         new CountAggregator());
         List<PropertyValueAggregator> edgeAgg = Arrays
-                .asList(new MapSumAggregator("attributes", "attributes"),
+                .asList(new MapSumAggregator("attributes", "attributesAgg"),
                         new CountAggregator());
         LogicalGraph schema = graph.groupBy(
                 Collections.singletonList(Grouping.LABEL_SYMBOL),
@@ -100,8 +100,8 @@ public class GroupingMain {
                 edgeAgg,
                 GroupingStrategy.GROUP_COMBINE);
 
-        // transform attributes map to single attributes
-        SplitAttributes splitter = new SplitAttributes("attributes");
+        // transform aggregated attributes map to single attributes
+        SplitAttributes splitter = new SplitAttributes("attributesAgg");
         schema = splitter.execute(schema);
 
         // instantiate a data sink for the DOT format
