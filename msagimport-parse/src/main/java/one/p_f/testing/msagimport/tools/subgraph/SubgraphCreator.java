@@ -47,7 +47,7 @@ public class SubgraphCreator {
      * Options for output files.
      */
     private static final OpenOption[] WRITE_BEHAVIOR = {
-        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
+        StandardOpenOption.CREATE_NEW, StandardOpenOption.TRUNCATE_EXISTING
     //StandardOpenOption.APPEND, StandardOpenOption.CREATE
     };
 
@@ -73,7 +73,7 @@ public class SubgraphCreator {
         }
         List<String> resultLines = lines.filter(filter)
                 .collect(Collectors.toList());
-        LOG.info(table);
+        LOG.log(Level.INFO, "Matched {0} lines.", resultLines.size());
         try {
             Files.write(out.resolve(table + ".txt"), resultLines,
                     WRITE_BEHAVIOR);
@@ -102,7 +102,7 @@ public class SubgraphCreator {
         LOG.log(Level.INFO, "Filtering {0} [{1}] by {2} [{3}]",
                 new Object[]{targetTable, targetColumn, sourceTable,
                     sourceColumn});
-        Set<String> filter = readColumn(in.resolve(sourceTable + ".txt"),
+        Set<String> filter = readColumn(out.resolve(sourceTable + ".txt"),
                 sourceColumn);
         filterBy(in, out, targetTable, filter::contains);
     }
@@ -194,7 +194,7 @@ public class SubgraphCreator {
         skip(inPath, outPath, "FieldsOfStudy.txt");
         skip(inPath, outPath, "FieldOfStudyHierarchy.txt");
         filterBy(inPath, outPath, "Affiliations", e
-                -> e.toLowerCase().contains(args[3].toLowerCase()));
+                -> e.toLowerCase().contains(args[2].toLowerCase()));
         filterByColumn(inPath, outPath, "Affiliations",
                 "PaperAuthorAffiliations", 0, 2);
         filterByColumn(inPath, outPath, "PaperAuthorAffiliations", "Papers", 0,
