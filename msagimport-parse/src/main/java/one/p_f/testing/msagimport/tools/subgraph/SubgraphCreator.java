@@ -178,10 +178,10 @@ public class SubgraphCreator {
      * Main method. Command line arguments are the source path (graph root) the
      * target path and the filter for Affiliations.
      *
-     * @param args Usage: INPATH OUTPUT TABLE FILTER
+     * @param args Usage: INPATH OUTPUT FILTER
      */
     public static void main(String[] args) {
-        if (args.length != 4) {
+        if (args.length != 3) {
             System.err.println("Usage: INPATH OUTPATH FILTER");
             return;
         }
