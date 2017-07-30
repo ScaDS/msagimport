@@ -192,6 +192,12 @@ public class SubgraphCreator {
             System.err.println("INPATH must be a directory.");
             return;
         }
+        try {
+            Files.createDirectories(outPath);
+        }
+        catch (IOException ex) {
+            LOG.log(Level.WARNING, "Failed to create output dir.", ex);
+        }
         skip(inPath, outPath, "FieldsOfStudy.txt");
         skip(inPath, outPath, "FieldOfStudyHierarchy.txt");
         filterBy(inPath, outPath, "Affiliations", e
