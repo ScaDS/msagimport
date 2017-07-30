@@ -61,7 +61,8 @@ public class MapSumAggregator extends PropertyValueAggregator {
     protected void aggregateInternal(PropertyValue in) {
         Map<PropertyValue, PropertyValue> newAttributesMap = in.getMap();
         newAttributesMap.keySet().stream().forEach((PropertyValue a)
-                -> aggregate.put(a, addNumbers(newAttributesMap.get(a),
+                -> aggregate.put(a, addNumbers(
+                        newAttributesMap.get(a),
                         aggregate.get(a))));
     }
 
@@ -78,9 +79,10 @@ public class MapSumAggregator extends PropertyValueAggregator {
     /**
      * Adds PropertyValues of the same {@link Number} type.
      *
-     * @param a first value of sum, may use <code>null</code> as 0
-     * @param b second velue of sum, may use <code>null</code> as 0
-     * @return sum of a and b or <code>null</code> if both are <code>null</code>
+     * @param a first value of sum, <code>null</code> may be used as 0
+     * @param b second velue of sum, <code>null</code> may be used as 0
+     * @return <code>a + b</code> or <code>null</code> if both are
+     * <code>null</code>
      */
     private PropertyValue addNumbers(PropertyValue a, PropertyValue b) {
         if (a == null && b == null) {
@@ -93,20 +95,15 @@ public class MapSumAggregator extends PropertyValueAggregator {
             return a;
         }
         Number sum;
-        if (a.isInt()
-                && b.isInt()) {
+        if (a.isInt() && b.isInt()) {
             sum = a.getInt() + b.getInt();
-        } else if (a.isLong()
-                && b.isLong()) {
+        } else if (a.isLong() && b.isLong()) {
             sum = a.getLong() + b.getLong();
-        } else if (a.isFloat()
-                && b.isFloat()) {
+        } else if (a.isFloat() && b.isFloat()) {
             sum = a.getFloat() + b.getFloat();
-        } else if (a.isDouble()
-                && b.isDouble()) {
+        } else if (a.isDouble() && b.isDouble()) {
             sum = a.getDouble() + b.getDouble();
-        } else if (a.isBigDecimal()
-                && b.isBigDecimal()) {
+        } else if (a.isBigDecimal() && b.isBigDecimal()) {
             sum = a.getBigDecimal().add(b.getBigDecimal());
         } else {
             throw new IllegalArgumentException(

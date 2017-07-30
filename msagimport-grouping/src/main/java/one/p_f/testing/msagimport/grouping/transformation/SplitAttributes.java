@@ -50,10 +50,13 @@ public class SplitAttributes {
             Map<PropertyValue, PropertyValue> joined = pOld.get(propertyKey)
                     .getMap();
             Properties p = new Properties();
+            // add all map elements with non empty and non null key
             joined.keySet().stream().sequential()
-                    .filter((PropertyValue a) -> !a.getString().equals(""))
+                    .filter((PropertyValue a) -> a != null
+                            && !a.getString().equals(""))
                     .forEach((PropertyValue a)
                             -> p.set(a.getString(), joined.get(a).getLong()));
+            // add all other properties
             StreamSupport.stream(pOld.getKeys().spliterator(), false)
                     .filter(k -> !k.equals(propertyKey))
                     .forEach(k -> p.set(k, pOld.get(k)));
@@ -68,10 +71,13 @@ public class SplitAttributes {
             Map<PropertyValue, PropertyValue> joined = pOld.get(propertyKey)
                     .getMap();
             Properties p = new Properties();
+            // add all map elements with non empty and non null key
             joined.keySet().stream().sequential()
-                    .filter((PropertyValue a) -> !a.getString().equals(""))
+                    .filter((PropertyValue a) -> a != null
+                            && !a.getString().equals(""))
                     .forEach((PropertyValue a)
                             -> p.set(a.getString(), joined.get(a).getLong()));
+            // add all other properties
             StreamSupport.stream(pOld.getKeys().spliterator(), false)
                     .filter(k -> !k.equals(propertyKey))
                     .forEach(k -> p.set(k, pOld.get(k)));
