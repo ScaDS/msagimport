@@ -104,7 +104,8 @@ public class SubgraphCreator {
                     sourceColumn});
         Set<String> filter = readColumn(out.resolve(sourceTable + ".txt"),
                 sourceColumn);
-        filterBy(in, out, targetTable, filter::contains);
+        filterBy(in, out, targetTable, e -> filter
+                .contains(e.split("\\t")[targetColumn]));
     }
 
     /**
