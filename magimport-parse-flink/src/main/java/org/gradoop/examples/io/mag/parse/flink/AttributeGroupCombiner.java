@@ -72,6 +72,8 @@ public class AttributeGroupCombiner implements
                 .collect(Collectors.groupingBy(Property::getKey, Collectors
                         .reducing(PropertyValue.create(new ArrayList<>()),
                                 Property::getValue, new ValueMerger())));
+        String id = grouped.keySet().iterator().next();
+        out.collect(new Tuple2<>(id, Properties.createFromMap((Map) merged)));
     }
 
 }
