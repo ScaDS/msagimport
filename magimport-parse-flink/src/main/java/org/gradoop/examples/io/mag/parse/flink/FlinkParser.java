@@ -26,6 +26,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.core.fs.Path;
 import org.gradoop.common.model.impl.properties.Properties;
 import org.gradoop.examples.io.mag.parse.flink.util.MagUtils;
+import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
 
 /**
  * Parse a MAG TSV file using flink.
@@ -87,6 +88,20 @@ public class FlinkParser implements Callable<DataSet<MagObject>> {
                 .setFieldData(line.split("\\t")));
     }
 
+    private DataSet<ImportEdge<String>> parseEdges(String tableName,
+            TableSchema schema) {
+        String source = tableName;
+        return createFromInput(tableName, schema)
+                .map(new EdgeMapper());
+    }
+
+    /**
+     * Parse a multi attribute table.
+     *
+     * @param tableName Table to parse.
+     * @param schema Schema of the input data.
+     * @return A dataset with a foreign key to properties mapping.
+     */
     private DataSet<Tuple2<String, Properties>> parseMultiAttributes(
             String tableName, TableSchema schema) {
         return createFromInput(tableName, schema)
