@@ -16,14 +16,16 @@
 package org.gradoop.examples.io.mag.parse.flink;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import one.p_f.testing.magimport.data.MagObject;
 import one.p_f.testing.magimport.data.TableSchema;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.io.TextInputFormat;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.core.fs.Path;
+import org.gradoop.common.model.impl.properties.Properties;
+import org.gradoop.examples.io.mag.parse.flink.util.MagUtils;
 
 /**
  * Parse a MAG TSV file using flink.
@@ -61,10 +63,13 @@ public class FlinkParser implements Callable<DataSet<MagObject>> {
 
     @Override
     public DataSet<MagObject> call() {
-        Optional<DataSet<MagObject>> parsed = graphSchema.entrySet().stream()
-                .map(e -> createFromInput(e.getKey(), e.getValue()))
-                .reduce(DataSet::union);
-        return parsed.isPresent() ? parsed.get() : environment.fromElements();
+        for (String table : graphSchema.keySet()) {
+            switch (graphSchema.get(table).getType()) {
+                case MULTI_ATTRIBUTE:
+                default:
+            }
+        }
+        return null;
     }
 
     /**
@@ -80,5 +85,16 @@ public class FlinkParser implements Callable<DataSet<MagObject>> {
         return environment.createInput(new TextInputFormat(tablePath))
                 .map(line -> new MagObject(schema)
                 .setFieldData(line.split("\\t")));
+    }
+
+    private DataSet<Tuple2<String, Properties>> parseMultiAttributes(
+            String tableName, TableSchema schema) {
+        return createFromInput(tableName, schema)
+                .map(e -> new Tuple2<>(MagUtils
+                .getByTypeSingle(e, TableSchema.FieldType.KEY).orElse(null),
+                MagUtils.convertAttributes(e)))
+                .filter(e -> e.f0 != null)
+                .groupBy(0)
+                .combineGroup(new AttributeGroupCombiner());
     }
 }
