@@ -17,10 +17,6 @@ package org.gradoop.examples.io.mag.parse.flink;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.apache.flink.api.common.functions.GroupCombineFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
@@ -36,44 +32,62 @@ public class AttributeGroupCombiner implements
         GroupCombineFunction<Tuple2<String, Properties>, Tuple2<String, Properties>> {
 
     /**
-     * An operator that merges {@link PropertyValue}s.
+     * Combine 2 {@link Properties} to 1. Elements will be combined using
+     * {@link #combine(PropertyValue, PropertyValue)}.
+     *
+     * @param first The first object.
+     * @param second The second object.
+     * @return The first object (with all values from the second added).
      */
-    private static class ValueMerger implements BinaryOperator<PropertyValue> {
-
-        @Override
-        public PropertyValue apply(PropertyValue t, PropertyValue u) {
-            List<PropertyValue> values = t.isList() ? t.getList()
-                    : new ArrayList<>();
-            if (u.isList()) {
-                values.addAll(u.getList());
+    public static Properties combine(Properties first, Properties second) {
+        for (Property prop : second) {
+            if (first.containsKey(prop.getKey())) {
+                PropertyValue firstVal = first.remove(prop.getKey());
+                PropertyValue secondVal = prop.getValue();
+                first.set(prop.getKey(), combine(firstVal, secondVal));
             } else {
-                values.add(u);
+                first.set(prop);
             }
-            return PropertyValue.create(values);
         }
+        return first;
+    }
 
+    /**
+     * Combine 2 {@link PropertyValue}s to 1. The result will be a {@link List}
+     * that is a union of the 2 input values. ({@link PropertyValue}s that are
+     * not {@link List}s will be converted to lists first.
+     *
+     * @param first The first value.
+     * @param second The second value.
+     * @return The union of both values.
+     */
+    public static PropertyValue combine(PropertyValue first,
+            PropertyValue second) {
+        List<PropertyValue> values = first.isList() ? first.getList()
+                : new ArrayList<>();
+        if (second.isList()) {
+            values.addAll(second.getList());
+        } else {
+            values.add(second);
+        }
+        return PropertyValue.create(values);
     }
 
     @Override
     public void combine(Iterable<Tuple2<String, Properties>> values,
             Collector<Tuple2<String, Properties>> out)
             throws MagParserException {
-        Map<String, List<Tuple2<String, Properties>>> grouped
-                = StreamSupport.stream(values.spliterator(), false)
-                        .collect(Collectors.groupingBy(e -> e.f0));
-        if (grouped.size() > 1) {
-            throw new MagParserException("Non-unique key in grouped dataset.");
-        } else if (grouped.isEmpty()) {
-            return;
+        String key = null;
+        Properties prop = null;
+        for (Tuple2<String, Properties> value : values) {
+            if (key == null) {
+                key = value.f0;
+            } else if (!key.equals(value.f0)) {
+                throw new MagParserException("Key mismatch.");
+            }
+            prop = prop == null ? value.f1 : combine(prop, value.f1);
         }
-        Map<String, PropertyValue> merged = grouped.values().iterator().next()
-                .stream().map(e -> e.f1)
-                .flatMap(e -> StreamSupport.stream(e.spliterator(), false))
-                .collect(Collectors.groupingBy(Property::getKey, Collectors
-                        .reducing(PropertyValue.create(new ArrayList<>()),
-                                Property::getValue, new ValueMerger())));
-        String id = grouped.keySet().iterator().next();
-        out.collect(new Tuple2<>(id, Properties.createFromMap((Map) merged)));
+        out.collect(new Tuple2<>(key, prop));
     }
 
 }
