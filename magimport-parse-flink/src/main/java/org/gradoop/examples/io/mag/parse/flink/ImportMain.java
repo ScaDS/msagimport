@@ -99,6 +99,12 @@ public class ImportMain {
             LOG.log(Level.SEVERE, "Failed to write graph.", ex);
             return;
         }
+        try {
+            localEnv.execute("ImportGraph");
+        } catch (Exception ex) {
+            LOG.log(Level.SEVERE, "Execution failed.", ex);
+            throw new RuntimeException(ex);
+        }
     }
 
     /**

@@ -15,6 +15,7 @@
  */
 package org.gradoop.examples.io.mag.parse.flink;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.IntStream;
 import one.p_f.testing.magimport.data.MagObject;
@@ -27,7 +28,8 @@ import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
 /**
  * A mapper mapping a {@link MagObject} to a gradoop edge.
  */
-public class EdgeMapper implements MapFunction<MagObject, ImportEdge<String>> {
+public class EdgeMapper implements MapFunction<MagObject, ImportEdge<String>>,
+        Serializable{
 
     /**
      * Delimiter to split the KEY fields by.

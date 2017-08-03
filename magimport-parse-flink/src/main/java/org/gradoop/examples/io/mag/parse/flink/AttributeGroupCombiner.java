@@ -15,6 +15,7 @@
  */
 package org.gradoop.examples.io.mag.parse.flink;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.flink.api.common.functions.GroupCombineFunction;
@@ -33,7 +34,8 @@ import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
  */
 public class AttributeGroupCombiner implements
         GroupCombineFunction<Tuple2<String, Properties>, Tuple2<String, Properties>>,
-        JoinFunction<ImportVertex<String>, Tuple2<String, Properties>, ImportVertex<String>> {
+        JoinFunction<ImportVertex<String>, Tuple2<String, Properties>, ImportVertex<String>>,
+        Serializable {
 
     /**
      * Combine 2 {@link Properties} to 1. Elements will be combined using

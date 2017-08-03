@@ -15,6 +15,7 @@
  */
 package one.p_f.testing.magimport.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.stream.IntStream;
  *
  * @author p-f
  */
-public class TableSchema {
+public class TableSchema implements Serializable {
 
     /**
      * Builder for {@link TableSchema}.

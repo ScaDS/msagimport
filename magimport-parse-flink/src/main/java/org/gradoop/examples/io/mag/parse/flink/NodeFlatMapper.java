@@ -15,6 +15,7 @@
  */
 package org.gradoop.examples.io.mag.parse.flink;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.IntStream;
 import one.p_f.testing.magimport.data.MagObject;
@@ -32,7 +33,8 @@ import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
  * edges. Both are mapped to tuple, because vertices and edges are tuples of
  * different sizes.
  */
-public class NodeFlatMapper implements FlatMapFunction<MagObject, Tuple> {
+public class NodeFlatMapper implements FlatMapFunction<MagObject, Tuple>,
+        Serializable {
 
     /**
      * Delimiter to split the KEY fields by.

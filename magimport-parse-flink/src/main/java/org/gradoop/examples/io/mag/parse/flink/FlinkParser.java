@@ -110,7 +110,7 @@ public class FlinkParser {
 
     /**
      * Get a DataSet of all parsed vertices.
-     * 
+     *
      * @return The DataSet.
      * @throws MagParserException if parsing or merging DataSets failed.
      */
