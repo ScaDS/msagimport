@@ -18,18 +18,22 @@ package org.gradoop.examples.io.mag.parse.flink;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.flink.api.common.functions.GroupCombineFunction;
+import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
 import org.gradoop.common.model.impl.properties.Properties;
 import org.gradoop.common.model.impl.properties.Property;
 import org.gradoop.common.model.impl.properties.PropertyValue;
+import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
 
 /**
  * A combiner that combines pairs of key and properties by key. This must only
- * be used on DataSets grouped by KEY.
+ * be used on DataSets grouped by KEY. Also acts as a custom join to join
+ * multiattributes with nodes.
  */
 public class AttributeGroupCombiner implements
-        GroupCombineFunction<Tuple2<String, Properties>, Tuple2<String, Properties>> {
+        GroupCombineFunction<Tuple2<String, Properties>, Tuple2<String, Properties>>,
+        JoinFunction<ImportVertex<String>, Tuple2<String, Properties>, ImportVertex<String>> {
 
     /**
      * Combine 2 {@link Properties} to 1. Elements will be combined using
@@ -88,6 +92,13 @@ public class AttributeGroupCombiner implements
             prop = prop == null ? value.f1 : combine(prop, value.f1);
         }
         out.collect(new Tuple2<>(key, prop));
+    }
+
+    @Override
+    public ImportVertex<String> join(ImportVertex<String> first,
+            Tuple2<String, Properties> second) throws MagParserException {
+        return new ImportVertex<>(second.f0, first.f1,
+                combine(first.f2, second.f1));
     }
 
 }
