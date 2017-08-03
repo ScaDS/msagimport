@@ -49,7 +49,25 @@ public final class MagUtils {
                 .forEach(i -> prop.set(names.get(i), obj.getFieldData(i)));
         return prop;
     }
-    
+
+    /**
+     * Same as {@link #convertAttributes(MagObject)}, except for ATTRIBUTE_1
+     * instead of ATTRIBUTE.
+     *
+     * @param obj Object to get attributes from.
+     * @return {@link Properties} used in Gradoop.
+     */
+    public static Properties convertAttributes1(MagObject obj) {
+        Properties prop = new Properties();
+        List<String> names = obj.getSchema().getFieldNames();
+        List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
+        IntStream.range(0, types.size()).filter(i
+                -> types.get(i).equals(TableSchema.FieldType.ATTRIBUTE_1))
+                .filter(i -> !obj.getFieldData(i).equals(""))
+                .forEach(i -> prop.set(names.get(i), obj.getFieldData(i)));
+        return prop;
+    }
+
     /**
      * Get a column from a {@link MagObject} that has a certain type. Returns an
      * empty {@link Optional} if more than 1 or 0 columns have the same type.
