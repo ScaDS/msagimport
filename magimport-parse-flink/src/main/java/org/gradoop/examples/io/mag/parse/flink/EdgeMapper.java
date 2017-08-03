@@ -29,7 +29,7 @@ import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
  * A mapper mapping a {@link MagObject} to a gradoop edge.
  */
 public class EdgeMapper implements MapFunction<MagObject, ImportEdge<String>>,
-        Serializable{
+        Serializable {
 
     /**
      * Delimiter to split the KEY fields by.

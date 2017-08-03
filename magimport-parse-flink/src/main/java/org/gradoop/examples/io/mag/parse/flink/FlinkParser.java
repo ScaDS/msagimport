@@ -21,10 +21,11 @@ import java.util.TreeMap;
 import java.util.stream.IntStream;
 import one.p_f.testing.magimport.data.MagObject;
 import one.p_f.testing.magimport.data.TableSchema;
+import org.apache.flink.api.common.functions.FilterFunction;
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.io.TextInputFormat;
-import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.core.fs.Path;
 import org.gradoop.common.model.impl.properties.Properties;
@@ -75,7 +76,7 @@ public class FlinkParser {
     /**
      * A map of all datasets of vertices and edges assigned by table name.
      */
-    private final Map<String, DataSet<Tuple>> combinedSets;
+    private final Map<String, DataSet<EdgeOrVertex<String>>> combinedSets;
 
     /**
      * Create the parser.
@@ -168,26 +169,34 @@ public class FlinkParser {
         // Combine datasets.
         // Step 1: Split combined datasets.
         for (String name : combinedSets.keySet()) {
-            DataSet<ImportVertex<String>> vertices;
-            DataSet<ImportEdge<String>> edges;
+            DataSet<ImportVertex<String>> vertices = null;
+            DataSet<ImportEdge<String>> edges = null;
             if (edgeSets.containsKey(name)) {
                 edges = edgeSets.remove(name);
-            } else {
-                edges = environment.fromElements();
             }
             if (vertexSets.containsKey(name)) {
                 vertices = vertexSets.remove(name);
-            } else {
-                vertices = environment.fromElements();
             }
             DataSet<ImportVertex<String>> newVertices = combinedSets.get(name)
-                    .filter(e -> e instanceof ImportVertex)
-                    .map(e -> (ImportVertex<String>) e).union(vertices);
-            vertexSets.put(name, newVertices);
+                    .filter(new FilterFunction<EdgeOrVertex<String>>() {
+                        @Override
+                        public boolean filter(EdgeOrVertex<String> value) {
+                            return value.f1 == null;
+                        }
+                    })
+                    .map(new EdgeOrVertex.ToVertex<>());
+            vertexSets.put(name, vertices == null ? newVertices
+                    : newVertices.union(vertices));
             DataSet<ImportEdge<String>> newEdges = combinedSets.get(name)
-                    .filter(e -> e instanceof ImportEdge)
-                    .map(e -> (ImportEdge<String>) e).union(edges);
-            edgeSets.put(name, newEdges);
+                    .filter(new FilterFunction<EdgeOrVertex<String>>() {
+                        @Override
+                        public boolean filter(EdgeOrVertex<String> value) {
+                            return value.f1 != null;
+                        }
+                    })
+                    .map(new EdgeOrVertex.ToEdge<>());
+            edgeSets.put(name, edges == null ? newEdges
+                    : newEdges.union(edges));
         }
         // Step 2: Add multiattributes.
         for (String name : attributes.keySet()) {
@@ -256,9 +265,15 @@ public class FlinkParser {
     private DataSet<Tuple2<String, Properties>> parseMultiAttributes(
             String tableName, TableSchema schema) {
         return createFromInput(tableName, schema)
-                .map(e -> new Tuple2<>(MagUtils
-                .getByTypeSingle(e, TableSchema.FieldType.KEY).orElse(null),
-                MagUtils.convertAttributes(e)))
+                .map(new MapFunction<MagObject, Tuple2<String, Properties>>() {
+                    @Override
+                    public Tuple2<String, Properties> map(MagObject e) {
+                        return new Tuple2<>(MagUtils
+                                .getByTypeSingle(e, TableSchema.FieldType.KEY)
+                                .orElse(null),
+                                MagUtils.convertAttributes(e));
+                    }
+                })
                 .filter(e -> e.f0 != null)
                 .groupBy(0)
                 .combineGroup(new AttributeGroupCombiner());
@@ -271,7 +286,8 @@ public class FlinkParser {
      * @param schema Schema of the input data.
      * @return A dataset of edges and vertices.
      */
-    private DataSet<Tuple> parseNodes(String tableName, TableSchema schema) {
+    private DataSet<EdgeOrVertex<String>> parseNodes(String tableName,
+            TableSchema schema) {
         return createFromInput(tableName, schema)
                 .flatMap(new NodeFlatMapper());
     }

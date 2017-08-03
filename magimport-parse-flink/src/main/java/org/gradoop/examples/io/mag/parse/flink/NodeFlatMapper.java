@@ -21,19 +21,16 @@ import java.util.stream.IntStream;
 import one.p_f.testing.magimport.data.MagObject;
 import one.p_f.testing.magimport.data.TableSchema;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.util.Collector;
 import org.gradoop.common.model.impl.properties.Properties;
 import org.gradoop.examples.io.mag.parse.flink.util.MagUtils;
-import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
-import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
 
 /**
  * A flat map function mapping a {@link MagObject} to gradoop vertices and
  * edges. Both are mapped to tuple, because vertices and edges are tuples of
  * different sizes.
  */
-public class NodeFlatMapper implements FlatMapFunction<MagObject, Tuple>,
+public class NodeFlatMapper implements FlatMapFunction<MagObject, EdgeOrVertex<String>>,
         Serializable {
 
     /**
@@ -69,7 +66,7 @@ public class NodeFlatMapper implements FlatMapFunction<MagObject, Tuple>,
     }
 
     @Override
-    public void flatMap(MagObject value, Collector<Tuple> out) throws
+    public void flatMap(MagObject value, Collector<EdgeOrVertex<String>> out) throws
             MagParserException {
         if (!initialized) {
             init(value);
@@ -81,12 +78,12 @@ public class NodeFlatMapper implements FlatMapFunction<MagObject, Tuple>,
         }
         String id = value.getFieldData(idIndex);
         Properties prop = MagUtils.convertAttributes(value);
-        out.collect(new ImportVertex(id, schema.getSchemaName(), prop));
+        out.collect(new EdgeOrVertex(id, schema.getSchemaName(), prop));
         IntStream.range(0, foreignKeys.length).map(e -> foreignKeys[e])
                 .mapToObj(e -> value.getFieldData(e))
                 .map(e -> e.split(delimiter))
-                .map(e -> new ImportEdge<>(id + '|' + e[1], id, e[1],
-                schema.getSchemaName() + '|' + e[0]))
+                .map(e -> new EdgeOrVertex(id + '|' + e[1], id, e[1],
+                schema.getSchemaName() + '|' + e[0], null))
                 .forEach(out::collect);
 
     }
