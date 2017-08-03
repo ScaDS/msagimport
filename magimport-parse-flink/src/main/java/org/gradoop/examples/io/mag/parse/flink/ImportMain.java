@@ -15,6 +15,7 @@
  */
 package org.gradoop.examples.io.mag.parse.flink;
 
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import one.p_f.testing.magimport.InputSchema;
@@ -23,8 +24,17 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.core.fs.Path;
+import org.gradoop.flink.io.api.DataSink;
+import org.gradoop.flink.io.api.DataSource;
+import org.gradoop.flink.io.impl.graph.GraphDataSource;
+import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
+import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
+import org.gradoop.flink.io.impl.json.JSONDataSink;
+import org.gradoop.flink.model.impl.LogicalGraph;
+import org.gradoop.flink.util.GradoopFlinkConfig;
 
 /**
  * Main class for importing mag data via flink.
@@ -64,10 +74,38 @@ public class ImportMain {
                 .createLocalEnvironment();
         FlinkParser parser
                 = new FlinkParser(inPath, localEnv, InputSchema.get());
-        parser.call();
-
+        DataSet<ImportVertex<String>> vertices;
+        DataSet<ImportEdge<String>> edges;
+        try {
+            vertices = parser.getVertices();
+            edges = parser.getEdges();
+        } catch (MagParserException mpe) {
+            LOG.log(Level.SEVERE, "Parsing failed.", mpe);
+            return;
+        }
+        GradoopFlinkConfig config = GradoopFlinkConfig.createConfig(localEnv);
+        DataSource source = new GraphDataSource(vertices, edges, config);
+        LogicalGraph graph;
+        try {
+            graph = source.getLogicalGraph();
+        } catch (IOException ioe) {
+            LOG.log(Level.SEVERE, "Failed to create logical graph.", ioe);
+            return;
+        }
+        DataSink sink = new JSONDataSink(outPath.toString(), config);
+        try {
+            sink.write(graph, true);
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Failed to write graph.", ex);
+            return;
+        }
     }
 
+    /**
+     * Helper method showing help.
+     *
+     * @param o Options to generate help from.
+     */
     private static void showHelp(Options o) {
         new HelpFormatter().printHelp("java ImportMain", o, true);
     }
