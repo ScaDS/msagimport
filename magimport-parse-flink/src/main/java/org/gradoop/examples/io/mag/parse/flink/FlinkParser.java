@@ -15,8 +15,10 @@
  */
 package org.gradoop.examples.io.mag.parse.flink;
 
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.TreeMap;
+import java.util.stream.IntStream;
 import one.p_f.testing.magimport.data.MagObject;
 import one.p_f.testing.magimport.data.TableSchema;
 import org.apache.flink.api.java.DataSet;
@@ -28,11 +30,17 @@ import org.apache.flink.core.fs.Path;
 import org.gradoop.common.model.impl.properties.Properties;
 import org.gradoop.examples.io.mag.parse.flink.util.MagUtils;
 import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
+import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
 
 /**
- * Parse a MAG TSV file using flink.
+ * Parse a MAG dump using flink.
  */
-public class FlinkParser implements Callable<DataSet<MagObject>> {
+public class FlinkParser {
+
+    /**
+     * Was the data parsed already?
+     */
+    private boolean parsed;
 
     /**
      * Environment to execute operations on.
@@ -50,6 +58,26 @@ public class FlinkParser implements Callable<DataSet<MagObject>> {
     private final Map<String, TableSchema> graphSchema;
 
     /**
+     * A map of all attributes assigned by table name.
+     */
+    private final Map<String, DataSet<Tuple2<String, Properties>>> attributes;
+
+    /**
+     * A map of all datasets of edges assigned by table name.
+     */
+    private final Map<String, DataSet<ImportEdge<String>>> edgeSets;
+
+    /**
+     * A map of all datasets of vertices assigned by table name.
+     */
+    private final Map<String, DataSet<ImportVertex<String>>> vertexSets;
+
+    /**
+     * A map of all datasets of vertices and edges assigned by table name.
+     */
+    private final Map<String, DataSet<Tuple>> combinedSets;
+
+    /**
      * Create the parser.
      *
      * @param inPath Path to read the files from.
@@ -58,20 +86,39 @@ public class FlinkParser implements Callable<DataSet<MagObject>> {
      */
     public FlinkParser(String inPath, ExecutionEnvironment env,
             Map<String, TableSchema> graphSchema) {
+        parsed = false;
         environment = env;
         rootPath = new Path(inPath);
         this.graphSchema = graphSchema;
+        attributes = new TreeMap<>();
+        edgeSets = new TreeMap<>();
+        vertexSets = new TreeMap<>();
+        combinedSets = new TreeMap<>();
     }
 
-    @Override
-    public DataSet<MagObject> call() {
-        for (String table : graphSchema.keySet()) {
-            switch (graphSchema.get(table).getType()) {
-                case MULTI_ATTRIBUTE:
-                default:
-            }
-        }
-        return null;
+    /**
+     * Get a DataSet of all parsed edges.
+     *
+     * @return The DataSet.
+     * @throws MagParserException if parsing or merging DataSets failed.
+     */
+    public DataSet<ImportEdge<String>> getEdges() throws MagParserException {
+        parseAll();
+        return edgeSets.values().stream().reduce(DataSet::union)
+                .orElse(environment.fromElements());
+    }
+
+    /**
+     * Get a DataSet of all parsed vertices.
+     * 
+     * @return The DataSet.
+     * @throws MagParserException if parsing or merging DataSets failed.
+     */
+    public DataSet<ImportVertex<String>> getVertices()
+            throws MagParserException {
+        parseAll();
+        return vertexSets.values().stream().reduce(DataSet::union)
+                .orElse(environment.fromElements());
     }
 
     /**
@@ -90,6 +137,89 @@ public class FlinkParser implements Callable<DataSet<MagObject>> {
     }
 
     /**
+     * Parse all tables.
+     */
+    private void parseAll() throws MagParserException {
+        if (parsed) {
+            return;
+        }
+        // First parse all.
+        for (String tableName : graphSchema.keySet()) {
+            TableSchema schema = graphSchema.get(tableName);
+            switch (schema.getType()) {
+                case NODE:
+                    combinedSets.put(tableName, parseNodes(tableName, schema));
+                    break;
+                case EDGE:
+                    edgeSets.put(tableName, parseEdges(tableName, schema));
+                    break;
+                case EDGE_3:
+                    edgeSets.put(tableName, parseEdges3(tableName, schema));
+                    break;
+                case MULTI_ATTRIBUTE:
+                    attributes.put(tableName,
+                            parseMultiAttributes(tableName, schema));
+                    break;
+                default:
+                    throw new MagParserException("Unknown table type:"
+                            + schema.getType());
+            }
+        }
+        // Combine datasets.
+        // Step 1: Split combined datasets.
+        for (String name : combinedSets.keySet()) {
+            DataSet<ImportVertex<String>> vertices;
+            DataSet<ImportEdge<String>> edges;
+            if (edgeSets.containsKey(name)) {
+                edges = edgeSets.remove(name);
+            } else {
+                edges = environment.fromElements();
+            }
+            if (vertexSets.containsKey(name)) {
+                vertices = vertexSets.remove(name);
+            } else {
+                vertices = environment.fromElements();
+            }
+            DataSet<ImportVertex<String>> newVertices = combinedSets.get(name)
+                    .filter(e -> e instanceof ImportVertex)
+                    .map(e -> (ImportVertex<String>) e).union(vertices);
+            vertexSets.put(name, newVertices);
+            DataSet<ImportEdge<String>> newEdges = combinedSets.get(name)
+                    .filter(e -> e instanceof ImportEdge)
+                    .map(e -> (ImportEdge<String>) e).union(edges);
+            edgeSets.put(name, newEdges);
+        }
+        // Step 2: Add multiattributes.
+        for (String name : attributes.keySet()) {
+            // Find correct table.
+            List<TableSchema.FieldType> types = graphSchema.get(name)
+                    .getFieldTypes();
+            String[] targetTable = IntStream.range(0, types.size())
+                    .filter(e -> types.get(e).equals(TableSchema.FieldType.KEY))
+                    .mapToObj(e -> graphSchema.get(name).getFieldNames().get(e))
+                    .map(e -> e
+                    .split(String.valueOf(TableSchema.SCOPE_SEPARATOR)))
+                    .filter(e -> e.length == 2).map(e -> e[0])
+                    .toArray(String[]::new);
+            if (targetTable.length != 1) {
+                throw new MagParserException(
+                        "Illegal number of foreign keys for " + name);
+            }
+            DataSet<ImportVertex<String>> vertices = vertexSets.get(name);
+            if (vertices == null) {
+                throw new MagParserException(
+                        "Attribute table with no matching nodes: " + name);
+            }
+            DataSet<ImportVertex<String>> joined = vertices
+                    .join(attributes.get(name)).where(0).equalTo(0)
+                    .with(new AttributeGroupCombiner());
+            vertexSets.put(name, joined);
+            attributes.remove(name);
+        }
+        parsed = true;
+    }
+
+    /**
      * Parse an edge table.
      *
      * @param tableName Table to parse.
@@ -101,6 +231,19 @@ public class FlinkParser implements Callable<DataSet<MagObject>> {
         String source = tableName;
         return createFromInput(tableName, schema)
                 .map(new EdgeMapper());
+    }
+
+    /**
+     * Parse an edge3 table.
+     *
+     * @param tableName Table to parse.
+     * @param schema Schema of the input data.
+     * @return A dataset of edges.
+     */
+    private DataSet<ImportEdge<String>> parseEdges3(String tableName,
+            TableSchema schema) {
+        return createFromInput(tableName, schema)
+                .flatMap(new Edge3FlatMapper());
     }
 
     /**
@@ -121,6 +264,13 @@ public class FlinkParser implements Callable<DataSet<MagObject>> {
                 .combineGroup(new AttributeGroupCombiner());
     }
 
+    /**
+     * Parse a node table.
+     *
+     * @param tableName Table to parse.
+     * @param schema Schema of the input data.
+     * @return A dataset of edges and vertices.
+     */
     private DataSet<Tuple> parseNodes(String tableName, TableSchema schema) {
         return createFromInput(tableName, schema)
                 .flatMap(new NodeFlatMapper());
