@@ -35,7 +35,7 @@ public class EdgeMapper implements MapFunction<MagObject, ImportEdge<String>> {
     private String delimiter;
 
     /**
-     * Was this mapper.
+     * Was this mapper initialized?
      */
     private boolean initialized;
 
@@ -81,7 +81,17 @@ public class EdgeMapper implements MapFunction<MagObject, ImportEdge<String>> {
                 target[1], schema.getSchemaName(), prop);
     }
 
+    /**
+     * Initialize the mapper. Should be called with the first element.
+     *
+     * @param first First object.
+     * @throws MagParserException If the object is not a valid EDGE.
+     */
     private void init(MagObject first) throws MagParserException {
+        if (!first.getSchema().getType().equals(TableSchema.ObjectType.EDGE)) {
+            throw new MagParserException("Object is not an edge: "
+                    + first.toString());
+        }
         List<TableSchema.FieldType> types = first.getSchema().getFieldTypes();
         int[] index = IntStream.range(0, types.size()).sequential()
                 .filter(e -> types.get(e).equals(TableSchema.FieldType.KEY))

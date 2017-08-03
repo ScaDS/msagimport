@@ -22,12 +22,13 @@ public class MagParserException extends Exception {
 
     /**
      * Create the exception with just a message.
+     *
      * @param msg Message.
      */
     public MagParserException(String msg) {
         super(msg);
     }
-    
+
     /**
      * Create the exception with a message and a cause.
      *

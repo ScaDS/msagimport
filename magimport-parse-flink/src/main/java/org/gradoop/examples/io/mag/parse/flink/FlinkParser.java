@@ -22,6 +22,7 @@ import one.p_f.testing.magimport.data.TableSchema;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.io.TextInputFormat;
+import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.core.fs.Path;
 import org.gradoop.common.model.impl.properties.Properties;
@@ -88,6 +89,13 @@ public class FlinkParser implements Callable<DataSet<MagObject>> {
                 .setFieldData(line.split("\\t")));
     }
 
+    /**
+     * Parse an edge table.
+     *
+     * @param tableName Table to parse.
+     * @param schema Schema of the input data.
+     * @return A dataset of edges.
+     */
     private DataSet<ImportEdge<String>> parseEdges(String tableName,
             TableSchema schema) {
         String source = tableName;
@@ -111,5 +119,10 @@ public class FlinkParser implements Callable<DataSet<MagObject>> {
                 .filter(e -> e.f0 != null)
                 .groupBy(0)
                 .combineGroup(new AttributeGroupCombiner());
+    }
+
+    private DataSet<Tuple> parseNodes(String tableName, TableSchema schema) {
+        return createFromInput(tableName, schema)
+                .flatMap(new NodeFlatMapper());
     }
 }
