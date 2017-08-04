@@ -79,12 +79,15 @@ public class NodeFlatMapper implements FlatMapFunction<MagObject, EdgeOrVertex<S
         String id = value.getFieldData(idIndex);
         Properties prop = MagUtils.convertAttributes(value);
         out.collect(new EdgeOrVertex(id, schema.getSchemaName(), prop));
-        IntStream.range(0, foreignKeys.length).map(e -> foreignKeys[e])
-                .mapToObj(e -> value.getFieldData(e))
-                .map(e -> new EdgeOrVertex(id + '|' + e, id, e,
-                schema.getSchemaName() + '|' + "", Properties.create()))
-                .forEach(out::collect);
+        for (int keyIndex : foreignKeys) {
+            String key = value.getFieldData(keyIndex);
+            String schemaName = schema.getFieldNames().get(keyIndex)
+                    .split(delimiter, -1)[0];
+            out.collect(new EdgeOrVertex<>(id + '|' + key, id, key,
+                    schema.getSchemaName() + '|' + schemaName,
+                    Properties.create()));
 
+        }
     }
 
     private void init(MagObject first) throws MagParserException {
