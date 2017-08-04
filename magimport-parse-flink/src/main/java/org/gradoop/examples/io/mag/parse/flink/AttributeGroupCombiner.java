@@ -93,7 +93,9 @@ public class AttributeGroupCombiner implements
             }
             prop = prop == null ? value.f1 : combine(prop, value.f1);
         }
-        out.collect(new Tuple2<>(key, prop));
+        if (key != null && prop != null) {
+            out.collect(new Tuple2<>(key, prop));
+        }
     }
 
     @Override
