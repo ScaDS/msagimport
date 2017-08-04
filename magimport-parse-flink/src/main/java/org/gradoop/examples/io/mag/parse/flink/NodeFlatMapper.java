@@ -66,8 +66,8 @@ public class NodeFlatMapper implements FlatMapFunction<MagObject, EdgeOrVertex<S
     }
 
     @Override
-    public void flatMap(MagObject value, Collector<EdgeOrVertex<String>> out) throws
-            MagParserException {
+    public void flatMap(MagObject value, Collector<EdgeOrVertex<String>> out)
+            throws MagParserException {
         if (!initialized) {
             init(value);
         }
@@ -81,9 +81,8 @@ public class NodeFlatMapper implements FlatMapFunction<MagObject, EdgeOrVertex<S
         out.collect(new EdgeOrVertex(id, schema.getSchemaName(), prop));
         IntStream.range(0, foreignKeys.length).map(e -> foreignKeys[e])
                 .mapToObj(e -> value.getFieldData(e))
-                .map(e -> e.split(delimiter))
-                .map(e -> new EdgeOrVertex(id + '|' + e[1], id, e[1],
-                schema.getSchemaName() + '|' + e[0], null))
+                .map(e -> new EdgeOrVertex(id + '|' + e, id, e,
+                schema.getSchemaName() + '|' + "", Properties.create()))
                 .forEach(out::collect);
 
     }

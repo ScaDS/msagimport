@@ -16,8 +16,6 @@
 package org.gradoop.examples.io.mag.parse.flink;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.stream.IntStream;
 import one.p_f.testing.magimport.data.MagObject;
 import one.p_f.testing.magimport.data.TableSchema;
 import org.apache.flink.api.common.functions.FlatMapFunction;
@@ -35,39 +33,38 @@ public class Edge3FlatMapper implements FlatMapFunction<MagObject, ImportEdge<St
     @Override
     public void flatMap(MagObject value, Collector<ImportEdge<String>> out)
             throws MagParserException {
-        TableSchema schema = value.getSchema();
-        List<TableSchema.FieldType> types = schema.getFieldTypes();
-        int[] keys1 = IntStream.range(0, types.size())
-                .filter(e -> types.get(e).equals(TableSchema.FieldType.KEY_1))
-                .toArray();
-        int[] keys2 = IntStream.range(0, types.size())
-                .filter(e -> types.get(e).equals(TableSchema.FieldType.KEY_2))
-                .toArray();
-        if (keys1.length != 2 || keys2.length != 2) {
-            throw new MagParserException("Illegal number of foreign keys: "
-                    + value.toString());
-        }
+        String key = MagUtils.getByTypeSingle(value, TableSchema.FieldType.KEY)
+                .orElseThrow(() -> new MagParserException(
+                "Malformed edge3 (no KEY): " + value));
+        String key1 = MagUtils.getByTypeSingle(value,
+                TableSchema.FieldType.KEY_1).orElseThrow(()
+                        -> new MagParserException(
+                        "Malformed edge3 (no KEY_1): " + value));
+        String key2 = MagUtils.getByTypeSingle(value,
+                TableSchema.FieldType.KEY_2).orElseThrow(()
+                        -> new MagParserException(
+                        "Malformed edge3 (no KEY_2): " + value));
         Properties prop1 = MagUtils.convertAttributes(value);
         Properties prop2 = MagUtils.convertAttributes1(value);
-        out.collect(makeEdge(keys1, prop1, value, 1));
-        out.collect(makeEdge(keys2, prop2, value, 2));
+        String schemaName = value.getSchema().getSchemaName();
+        out.collect(makeEdge(key, key1, prop1, schemaName, 1));
+        out.collect(makeEdge(key, key2, prop2, schemaName, 2));
     }
 
     /**
      * Helper method creating an edge.
      *
-     * @param key Index for key columns.
+     * @param source Source node id.
+     * @param target Target node id.
      * @param prop Properties of the edge.
-     * @param obj The object.
+     * @param schema Schema name of the edge.
      * @param run Number to append to label.
      * @return The edge.
      */
-    private static ImportEdge<String> makeEdge(int[] key, Properties prop,
-            MagObject obj, int run) {
-        String source = obj.getFieldData(key[0]);
-        String target = obj.getFieldData(key[1]);
+    private static ImportEdge<String> makeEdge(String source, String target,
+            Properties prop, String schema, int run) {
         return new ImportEdge<>(source + '|' + target, source, target,
-                obj.getSchema().getSchemaName() + '_' + run, prop);
+                schema + '_' + run, prop);
     }
 
 }

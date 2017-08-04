@@ -94,10 +94,14 @@ public class MagObject implements Serializable {
      */
     public MagObject setFieldData(String... fieldData) {
         if (fieldData.length != data.length) {
-            LOG.log(Level.SEVERE, "Wrong number of fields given: {0}",
-                    fieldData.length != 0
-                            ? Arrays.deepToString(fieldData) : "<empty>");
-            throw new IllegalArgumentException("Wrong number of fields given");
+            String error = fieldData.length != 0
+                    ? Arrays.deepToString(fieldData) : "<empty>";
+            LOG.log(Level.SEVERE,
+                    "Wrong number of fields given: expected {0}, got {1}",
+                    new Object[]{fieldData.length, error});
+            throw new IllegalArgumentException(String.format(
+                    "Wrong number of fields given: expected %d, got \"%s\"",
+                    fieldData.length, error));
         }
         System.arraycopy(fieldData, 0, data, 0, data.length);
         return this;

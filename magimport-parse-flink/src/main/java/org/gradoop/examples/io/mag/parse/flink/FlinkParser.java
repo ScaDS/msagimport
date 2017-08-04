@@ -106,7 +106,7 @@ public class FlinkParser {
     public DataSet<ImportEdge<String>> getEdges() throws MagParserException {
         parseAll();
         return edgeSets.values().stream().reduce(DataSet::union)
-                .orElse(environment.fromElements());
+                .orElseThrow(() -> new MagParserException("No edges."));
     }
 
     /**
@@ -119,7 +119,7 @@ public class FlinkParser {
             throws MagParserException {
         parseAll();
         return vertexSets.values().stream().reduce(DataSet::union)
-                .orElse(environment.fromElements());
+                .orElseThrow(() -> new MagParserException("No vertices."));
     }
 
     /**
@@ -134,7 +134,7 @@ public class FlinkParser {
         Path tablePath = new Path(rootPath, table + ".txt");
         return environment.createInput(new TextInputFormat(tablePath))
                 .map(line -> new MagObject(schema)
-                .setFieldData(line.split("\\t")));
+                .setFieldData(line.split("\\t", -1)));
     }
 
     /**
@@ -214,10 +214,12 @@ public class FlinkParser {
                 throw new MagParserException(
                         "Illegal number of foreign keys for " + name);
             }
-            DataSet<ImportVertex<String>> vertices = vertexSets.get(name);
+            DataSet<ImportVertex<String>> vertices = vertexSets
+                    .get(targetTable[0]);
             if (vertices == null) {
                 throw new MagParserException(
-                        "Attribute table with no matching nodes: " + name);
+                        "Attribute table with no matching nodes: "
+                        + targetTable[0]);
             }
             DataSet<ImportVertex<String>> joined = vertices
                     .join(attributes.get(name)).where(0).equalTo(0)

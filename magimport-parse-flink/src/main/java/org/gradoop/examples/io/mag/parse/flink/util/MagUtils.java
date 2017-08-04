@@ -78,19 +78,10 @@ public final class MagUtils {
      */
     public static Optional<String> getByTypeSingle(MagObject source,
             TableSchema.FieldType type) {
-        // TODO: Cache the index to reduce complexity.
         List<TableSchema.FieldType> types = source.getSchema().getFieldTypes();
-        int index = -1;
-        for (int i = 0; i < types.size(); i++) {
-            if (types.get(i).equals(type)) {
-                if (index != -1) {
-                    index = i;
-                } else {
-                    return Optional.empty();
-                }
-            }
-        }
-        return index != -1 ? Optional.of(source.getFieldData(index))
+        int[] index = IntStream.range(0, types.size())
+                .filter(e -> types.get(e).equals(type)).toArray();
+        return index.length == 1 ? Optional.of(source.getFieldData(index[0]))
                 : Optional.empty();
     }
 

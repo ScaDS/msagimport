@@ -74,13 +74,10 @@ public class EdgeMapper implements MapFunction<MagObject, ImportEdge<String>>,
                     + value.toString());
         }
         Properties prop = MagUtils.convertAttributes(value);
-        String[] source = value.getFieldData(sourceIndex).split(delimiter);
-        String[] target = value.getFieldData(targetIndex).split(delimiter);
-        if (source.length != 2 || target.length != 2) {
-            throw new MagParserException("Malformed edge: " + value.toString());
-        }
-        return new ImportEdge<>(source[1] + '|' + target[1], source[1],
-                target[1], schema.getSchemaName(), prop);
+        String source = value.getFieldData(sourceIndex);
+        String target = value.getFieldData(targetIndex);
+        return new ImportEdge<>(source + '|' + target, source, target,
+                schema.getSchemaName(), prop);
     }
 
     /**
