@@ -36,6 +36,7 @@
         <module>./magimport-parse</module>
         <module>./magimport-gradoop</module>
         <module>./magimport-grouping</module>
+        <module>magimport-parse-flink</module>
     </modules>
     <reporting>
         <plugins>

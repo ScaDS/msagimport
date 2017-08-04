@@ -15,6 +15,7 @@
  */
 package one.p_f.testing.magimport.data;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,8 +25,16 @@ import java.util.logging.Logger;
  *
  * @author p-f
  */
-public class MagObject {
+public class MagObject implements Serializable {
 
+    /**
+     * Serialization version ID.
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Logger of this class.
+     */
     private static final Logger LOG
             = Logger.getLogger(MagObject.class.getName());
 
@@ -79,22 +88,28 @@ public class MagObject {
      * columns in this records {@link TableSchema}.
      *
      * @param fieldData Data to set.
+     * @return This object.
      * @throws IllegalArgumentException iff the number of arguments is
      * incorrect.
      */
-    public void setFieldData(String... fieldData) {
+    public MagObject setFieldData(String... fieldData) {
         if (fieldData.length != data.length) {
-            LOG.log(Level.SEVERE, "Wrong number of fields given: {0}",
-                    fieldData.length != 0
-                            ? Arrays.deepToString(fieldData) : "<empty>");
-            throw new IllegalArgumentException("Wrong number of fields given");
+            String error = fieldData.length != 0
+                    ? Arrays.deepToString(fieldData) : "<empty>";
+            LOG.log(Level.SEVERE,
+                    "Wrong number of fields given: expected {0}, got {1}",
+                    new Object[]{fieldData.length, error});
+            throw new IllegalArgumentException(String.format(
+                    "Wrong number of fields given: expected %d, got \"%s\"",
+                    fieldData.length, error));
         }
         System.arraycopy(fieldData, 0, data, 0, data.length);
+        return this;
     }
 
     /**
      * Set data of a certain column of this record.
-     * 
+     *
      * @param field Number of the column to set.
      * @param newData Data to put in the cell.
      * @throws IllegalArgumentException iff the column number is not in range.
