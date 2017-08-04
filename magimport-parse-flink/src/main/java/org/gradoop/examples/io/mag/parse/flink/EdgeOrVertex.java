@@ -60,7 +60,7 @@ public class EdgeOrVertex<K extends Comparable<K>>
         @Override
         public ImportVertex<K> map(EdgeOrVertex<K> value)
                 throws MagParserException {
-            if (value.f1 != null | value.f2 != null) {
+            if (value.f1 != null || value.f2 != null) {
                 throw new MagParserException("Object may not be a vertex.");
             }
             return new ImportVertex<>(value.f0, value.f3, value.f4);
