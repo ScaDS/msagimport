@@ -119,14 +119,6 @@ public class TableSchema implements Serializable {
         }
     }
     
-    public static final class ForeignKey { 
-        public final String scope;
-        public final String key;
-        public ForeignKey(String scope, String key) { 
-          this.scope = scope; 
-          this.key = key; 
-        }
-    }
 
     /**
      * Type of a table.
