@@ -21,15 +21,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-import org.gradoop.examples.io.mag.magimport.grouping.io.dot.ImprovedDotDataSink;
 import org.gradoop.examples.io.mag.magimport.grouping.aggregation.MapSumAggregator;
 import org.gradoop.examples.io.mag.magimport.grouping.transformation.JoinAttributes;
 import org.gradoop.examples.io.mag.magimport.grouping.transformation.SplitAttributes;
 import org.gradoop.flink.io.api.DataSink;
 import org.gradoop.flink.io.api.DataSource;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.gradoop.flink.io.impl.dot.DOTDataSink;
 import org.gradoop.flink.io.impl.json.JSONDataSource;
-import org.gradoop.flink.model.impl.LogicalGraph;
+import org.gradoop.flink.model.api.epgm.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.grouping.Grouping;
 import org.gradoop.flink.model.impl.operators.grouping.GroupingStrategy;
 import org.gradoop.flink.model.impl.operators.grouping.functions.aggregation.PropertyValueAggregator;
@@ -105,7 +105,7 @@ public class GroupingMain {
         schema = splitter.execute(schema);
 
         // instantiate a data sink for the DOT format
-        DataSink dataSink = new ImprovedDotDataSink(outputPath, false);
+        DataSink dataSink = new DOTDataSink(outputPath, false);
         dataSink.write(schema, true);
 
         // run the job
