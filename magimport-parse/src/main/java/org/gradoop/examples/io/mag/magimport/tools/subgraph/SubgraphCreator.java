@@ -117,7 +117,6 @@ public class SubgraphCreator {
     private static boolean linkOrCopy(Path source, Path target) {
         LOG.log(Level.INFO, "Creating link: {0} -> {1}",
                 new Object[]{source.toString(), target.toString()});
-        // TODO: Make the link relative.
         try {
             Files.createSymbolicLink(target, source);
             return true;
