@@ -23,6 +23,8 @@ import org.gradoop.examples.io.mag.magimport.data.TableSchema;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
 import org.gradoop.common.model.impl.properties.Properties;
+import org.gradoop.examples.io.mag.magimport.data.FieldType;
+import org.gradoop.examples.io.mag.magimport.data.ObjectType;
 import org.gradoop.examples.io.mag.parse.flink.util.MagUtils;
 
 /**
@@ -92,17 +94,17 @@ public class NodeFlatMapper implements FlatMapFunction<MagObject, EdgeOrVertex<S
 
     private void init(MagObject first) throws MagParserException {
         schema = first.getSchema();
-        if (!schema.getType().equals(TableSchema.ObjectType.NODE)) {
+        if (!schema.getType().equals(ObjectType.NODE)) {
             throw new MagParserException("Object is not a node: "
                     + first.toString());
         }
-        List<TableSchema.FieldType> types = schema.getFieldTypes();
+        List<FieldType> types = schema.getFieldTypes();
         delimiter = String.valueOf(TableSchema.SCOPE_SEPARATOR);
         int[] idIndexNew = IntStream.range(0, types.size())
-                .filter(e -> types.get(e).equals(TableSchema.FieldType.ID))
+                .filter(e -> types.get(e).equals(FieldType.ID))
                 .toArray();
         foreignKeys = IntStream.range(0, types.size())
-                .filter(e -> types.get(e).equals(TableSchema.FieldType.KEY))
+                .filter(e -> types.get(e).equals(FieldType.KEY))
                 .toArray();
         if (idIndexNew.length != 1) {
             throw new MagParserException("Illegal number of IDs found: "

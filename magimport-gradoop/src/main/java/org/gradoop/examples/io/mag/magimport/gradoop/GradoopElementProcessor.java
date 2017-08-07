@@ -30,6 +30,7 @@ import org.gradoop.examples.io.mag.magimport.data.TableSchema;
 import org.apache.log4j.Logger;
 import org.gradoop.common.model.impl.properties.Properties;
 import org.gradoop.common.model.impl.properties.PropertyValue;
+import org.gradoop.examples.io.mag.magimport.data.FieldType;
 import org.gradoop.examples.io.mag.magimport.data.ForeignKey;
 import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
 import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
@@ -221,11 +222,11 @@ public class GradoopElementProcessor implements ElementProcessor {
      * @return A map storing table and id of the foreign object.
      */
     private List<ForeignKey> getForeignKeys(MagObject obj) {
-        List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
+        List<FieldType> types = obj.getSchema().getFieldTypes();
         List<String> fieldNames = obj.getSchema().getFieldNames();
         List<ForeignKey> keys = new ArrayList<>();
         for (int i = 0; i < types.size(); i++) {
-            if (!types.get(i).equals(TableSchema.FieldType.KEY)) {
+            if (!types.get(i).equals(FieldType.KEY)) {
                 continue;
             }
             String[] name = fieldNames.get(i)
@@ -254,15 +255,15 @@ public class GradoopElementProcessor implements ElementProcessor {
      */
     private List<String> getForeignKeysEdge3(MagObject obj,
             boolean firstRun) {
-        List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
+        List<FieldType> types = obj.getSchema().getFieldTypes();
         List<String> fieldNames = obj.getSchema().getFieldNames();
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < types.size(); i++) {
-            if (!types.get(i).equals(TableSchema.FieldType.KEY)
+            if (!types.get(i).equals(FieldType.KEY)
                     && ((firstRun
-                    && !types.get(i).equals(TableSchema.FieldType.KEY_1))
+                    && !types.get(i).equals(FieldType.KEY_1))
                     || (!firstRun
-                    && !types.get(i).equals(TableSchema.FieldType.KEY_2)))) {
+                    && !types.get(i).equals(FieldType.KEY_2)))) {
                 continue;
             }
             String[] name = fieldNames.get(i)
@@ -290,9 +291,9 @@ public class GradoopElementProcessor implements ElementProcessor {
     private static Properties convertAttributes(MagObject obj) {
         Properties prop = new Properties();
         List<String> names = obj.getSchema().getFieldNames();
-        List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
+        List<FieldType> types = obj.getSchema().getFieldTypes();
         IntStream.range(0, types.size()).filter(i
-                -> types.get(i).equals(TableSchema.FieldType.ATTRIBUTE))
+                -> types.get(i).equals(FieldType.ATTRIBUTE))
                 .filter(i -> !obj.getFieldData(i).equals(""))
                 .forEach(i -> prop.set(names.get(i), obj.getFieldData(i)));
         return prop;
@@ -310,13 +311,13 @@ public class GradoopElementProcessor implements ElementProcessor {
             boolean firstRun) {
         Properties prop = new Properties();
         List<String> names = obj.getSchema().getFieldNames();
-        List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
+        List<FieldType> types = obj.getSchema().getFieldTypes();
         IntStream.range(0, types.size()).filter(i
-                -> types.get(i).equals(TableSchema.FieldType.ATTRIBUTE)
+                -> types.get(i).equals(FieldType.ATTRIBUTE)
                 || ((firstRun
-                && types.get(i).equals(TableSchema.FieldType.ATTRIBUTE_1))
+                && types.get(i).equals(FieldType.ATTRIBUTE_1))
                 || (!firstRun
-                && types.get(i).equals(TableSchema.FieldType.KEY_1))))
+                && types.get(i).equals(FieldType.KEY_1))))
                 .filter(i -> !obj.getFieldData(i).equals(""))
                 .forEach(i -> prop.set(names.get(i), obj.getFieldData(i)));
         return prop;
@@ -329,9 +330,9 @@ public class GradoopElementProcessor implements ElementProcessor {
      * @return ID (as {@link Optional}).
      */
     private static Optional<String> getId(MagObject obj) {
-        List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
+        List<FieldType> types = obj.getSchema().getFieldTypes();
         for (int i = 0; i < types.size(); i++) {
-            if (types.get(i).equals(TableSchema.FieldType.ID)) {
+            if (types.get(i).equals(FieldType.ID)) {
                 return Optional.of(obj.getFieldData(i));
             }
         }

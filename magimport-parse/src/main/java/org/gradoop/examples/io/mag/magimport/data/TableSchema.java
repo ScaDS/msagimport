@@ -120,67 +120,7 @@ public class TableSchema implements Serializable {
     }
     
 
-    /**
-     * Type of a table.
-     */
-    public static enum ObjectType {
-        /**
-         * A node.
-         */
-        NODE,
-        /**
-         * An edge between 2 nodes.
-         */
-        EDGE,
-        /**
-         * An edge between 3 nodes.
-         */
-        EDGE_3,
-        /**
-         * Attributes of an object. (many-to-one)
-         *
-         * lol, doesn't work atm.
-         */
-        MULTI_ATTRIBUTE
-    }
 
-    /**
-     * Type of a column.
-     */
-    public static enum FieldType {
-        /**
-         * Unique identifier of an object.
-         */
-        ID,
-        /**
-         * An attribute of an object.
-         */
-        ATTRIBUTE,
-        /**
-         * Used in {@link ObjectType#EDGE_3} as an attribute of the first edge.
-         * (Ignored on second edge.)
-         */
-        ATTRIBUTE_1,
-        /**
-         * Foreign key to a different schema. A value of this column should have
-         * the format SCHEMANAME:ID where SCHEMANAME is
-         * {@link TableSchema#getSchemaName() schema name} and ID is a column of
-         * type {@link FieldType#ID}.
-         */
-        KEY,
-        /**
-         * Foreign key to the first table. (Used in {@link ObjectType#EDGE_3}).)
-         */
-        KEY_1,
-        /**
-         * Foreign key to the second table. (Used in {@link ObjectType#EDGE_3}.)
-         */
-        KEY_2,
-        /**
-         * Ignore this field. *sad face*
-         */
-        IGNORE
-    }
 
     /**
      * Used as a separator in

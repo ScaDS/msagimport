@@ -29,6 +29,7 @@ import org.apache.flink.api.java.io.TextInputFormat;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.core.fs.Path;
 import org.gradoop.common.model.impl.properties.Properties;
+import org.gradoop.examples.io.mag.magimport.data.FieldType;
 import org.gradoop.examples.io.mag.parse.flink.util.MagUtils;
 import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
 import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
@@ -201,10 +202,10 @@ public class FlinkParser {
         // Step 2: Add multiattributes.
         for (String name : attributes.keySet()) {
             // Find correct table.
-            List<TableSchema.FieldType> types = graphSchema.get(name)
+            List<FieldType> types = graphSchema.get(name)
                     .getFieldTypes();
             String[] targetTable = IntStream.range(0, types.size())
-                    .filter(e -> types.get(e).equals(TableSchema.FieldType.KEY))
+                    .filter(e -> types.get(e).equals(FieldType.KEY))
                     .mapToObj(e -> graphSchema.get(name).getFieldNames().get(e))
                     .map(e -> e
                     .split(String.valueOf(TableSchema.SCOPE_SEPARATOR)))
@@ -271,7 +272,7 @@ public class FlinkParser {
                     @Override
                     public Tuple2<String, Properties> map(MagObject e) {
                         return new Tuple2<>(MagUtils
-                                .getByTypeSingle(e, TableSchema.FieldType.KEY)
+                                .getByTypeSingle(e, FieldType.KEY)
                                 .orElse(null),
                                 MagUtils.convertAttributes(e));
                     }

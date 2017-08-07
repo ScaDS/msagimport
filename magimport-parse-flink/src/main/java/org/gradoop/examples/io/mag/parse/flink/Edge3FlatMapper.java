@@ -21,6 +21,7 @@ import org.gradoop.examples.io.mag.magimport.data.TableSchema;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
 import org.gradoop.common.model.impl.properties.Properties;
+import org.gradoop.examples.io.mag.magimport.data.FieldType;
 import org.gradoop.examples.io.mag.parse.flink.util.MagUtils;
 import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
 
@@ -33,15 +34,15 @@ public class Edge3FlatMapper implements FlatMapFunction<MagObject, ImportEdge<St
     @Override
     public void flatMap(MagObject value, Collector<ImportEdge<String>> out)
             throws MagParserException {
-        String key = MagUtils.getByTypeSingle(value, TableSchema.FieldType.KEY)
+        String key = MagUtils.getByTypeSingle(value, FieldType.KEY)
                 .orElseThrow(() -> new MagParserException(
                 "Malformed edge3 (no KEY): " + value));
         String key1 = MagUtils.getByTypeSingle(value,
-                TableSchema.FieldType.KEY_1).orElseThrow(()
+                FieldType.KEY_1).orElseThrow(()
                         -> new MagParserException(
                         "Malformed edge3 (no KEY_1): " + value));
         String key2 = MagUtils.getByTypeSingle(value,
-                TableSchema.FieldType.KEY_2).orElseThrow(()
+                FieldType.KEY_2).orElseThrow(()
                         -> new MagParserException(
                         "Malformed edge3 (no KEY_2): " + value));
         Properties prop1 = MagUtils.convertAttributes(value);

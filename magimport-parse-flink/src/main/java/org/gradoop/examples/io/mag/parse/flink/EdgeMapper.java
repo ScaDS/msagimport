@@ -22,6 +22,8 @@ import org.gradoop.examples.io.mag.magimport.data.MagObject;
 import org.gradoop.examples.io.mag.magimport.data.TableSchema;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.gradoop.common.model.impl.properties.Properties;
+import org.gradoop.examples.io.mag.magimport.data.FieldType;
+import org.gradoop.examples.io.mag.magimport.data.ObjectType;
 import org.gradoop.examples.io.mag.parse.flink.util.MagUtils;
 import org.gradoop.flink.io.impl.graph.tuples.ImportEdge;
 
@@ -87,13 +89,13 @@ public class EdgeMapper implements MapFunction<MagObject, ImportEdge<String>>,
      * @throws MagParserException If the object is not a valid EDGE.
      */
     private void init(MagObject first) throws MagParserException {
-        if (!first.getSchema().getType().equals(TableSchema.ObjectType.EDGE)) {
+        if (!first.getSchema().getType().equals(ObjectType.EDGE)) {
             throw new MagParserException("Object is not an edge: "
                     + first.toString());
         }
-        List<TableSchema.FieldType> types = first.getSchema().getFieldTypes();
+        List<FieldType> types = first.getSchema().getFieldTypes();
         int[] index = IntStream.range(0, types.size()).sequential()
-                .filter(e -> types.get(e).equals(TableSchema.FieldType.KEY))
+                .filter(e -> types.get(e).equals(FieldType.KEY))
                 .toArray();
         if (index.length != 2) {
             throw new MagParserException("Illegal number of foreign key on "

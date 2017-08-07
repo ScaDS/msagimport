@@ -21,6 +21,7 @@ import java.util.stream.IntStream;
 import org.gradoop.examples.io.mag.magimport.data.MagObject;
 import org.gradoop.examples.io.mag.magimport.data.TableSchema;
 import org.gradoop.common.model.impl.properties.Properties;
+import org.gradoop.examples.io.mag.magimport.data.FieldType;
 
 /**
  * Utilities for extracting information from {@link MagObject}s.
@@ -42,9 +43,9 @@ public final class MagUtils {
     public static Properties convertAttributes(MagObject obj) {
         Properties prop = new Properties();
         List<String> names = obj.getSchema().getFieldNames();
-        List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
+        List<FieldType> types = obj.getSchema().getFieldTypes();
         IntStream.range(0, types.size()).filter(i
-                -> types.get(i).equals(TableSchema.FieldType.ATTRIBUTE))
+                -> types.get(i).equals(FieldType.ATTRIBUTE))
                 .filter(i -> !obj.getFieldData(i).equals(""))
                 .forEach(i -> prop.set(names.get(i), obj.getFieldData(i)));
         return prop;
@@ -60,9 +61,9 @@ public final class MagUtils {
     public static Properties convertAttributes1(MagObject obj) {
         Properties prop = new Properties();
         List<String> names = obj.getSchema().getFieldNames();
-        List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
+        List<FieldType> types = obj.getSchema().getFieldTypes();
         IntStream.range(0, types.size()).filter(i
-                -> types.get(i).equals(TableSchema.FieldType.ATTRIBUTE_1))
+                -> types.get(i).equals(FieldType.ATTRIBUTE_1))
                 .filter(i -> !obj.getFieldData(i).equals(""))
                 .forEach(i -> prop.set(names.get(i), obj.getFieldData(i)));
         return prop;
@@ -77,8 +78,8 @@ public final class MagUtils {
      * @return An {@link Optional} containing the element or nothing.
      */
     public static Optional<String> getByTypeSingle(MagObject source,
-            TableSchema.FieldType type) {
-        List<TableSchema.FieldType> types = source.getSchema().getFieldTypes();
+            FieldType type) {
+        List<FieldType> types = source.getSchema().getFieldTypes();
         int[] index = IntStream.range(0, types.size())
                 .filter(e -> types.get(e).equals(type)).toArray();
         return index.length == 1 ? Optional.of(source.getFieldData(index[0]))
@@ -92,9 +93,9 @@ public final class MagUtils {
      * @return The ID as an {@link Optional}.
      */
     public static Optional<String> getId(MagObject obj) {
-        List<TableSchema.FieldType> types = obj.getSchema().getFieldTypes();
+        List<FieldType> types = obj.getSchema().getFieldTypes();
         for (int i = 0; i < types.size(); i++) {
-            if (types.get(i).equals(TableSchema.FieldType.ID)) {
+            if (types.get(i).equals(FieldType.ID)) {
                 return Optional.of(obj.getFieldData(i));
             }
         }
