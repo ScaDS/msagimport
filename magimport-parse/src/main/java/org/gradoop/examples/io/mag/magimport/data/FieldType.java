@@ -22,22 +22,34 @@ public enum FieldType {
     /**
      * Unique identifier of an object.
      */
-    ID, /**
+    ID,
+    /**
      * An attribute of an object.
-     */ ATTRIBUTE, /**
+     */
+    ATTRIBUTE,
+    /**
      * Used in {@link ObjectType#EDGE_3} as an attribute of the first edge.
      * (Ignored on second edge.)
-     */ ATTRIBUTE_1, /**
-     * Foreign key to a different schema. A value of this column should have
-     * the format SCHEMANAME:ID where SCHEMANAME is
+     */
+    ATTRIBUTE_1,
+    /**
+     * Foreign key to a different schema. A value of this column should have the
+     * format SCHEMANAME:ID where SCHEMANAME is
      * {@link TableSchema#getSchemaName() schema name} and ID is a column of
      * type {@link FieldType#ID}.
-     */ KEY, /**
+     */
+    KEY,
+    /**
      * Foreign key to the first table. (Used in {@link ObjectType#EDGE_3}).)
-     */ KEY_1, /**
+     */
+    KEY_1,
+    /**
      * Foreign key to the second table. (Used in {@link ObjectType#EDGE_3}.)
-     */ KEY_2, /**
+     */
+    KEY_2,
+    /**
      * Ignore this field. *sad face*
-     */ IGNORE
-    
+     */
+    IGNORE
+
 }

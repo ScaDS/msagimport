@@ -22,14 +22,18 @@ public enum ObjectType {
     /**
      * A node.
      */
-    NODE, /**
+    NODE,
+    /**
      * An edge between 2 nodes.
-     */ EDGE, /**
+     */
+    EDGE,
+    /**
      * An edge between 3 nodes.
-     */ EDGE_3, /**
+     */
+    EDGE_3,
+    /**
      * Attributes of an object. (many-to-one)
-     *
-     * lol, doesn't work atm.
-     */ MULTI_ATTRIBUTE
-    
+     */
+    MULTI_ATTRIBUTE
+
 }
