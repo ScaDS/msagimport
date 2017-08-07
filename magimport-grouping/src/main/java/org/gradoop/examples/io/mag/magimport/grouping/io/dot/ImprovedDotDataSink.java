@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package one.p_f.testing.magimport.grouping.io.dot;
+package org.gradoop.examples.io.mag.magimport.grouping.io.dot;
 
 import java.io.IOException;
 import org.apache.flink.core.fs.FileSystem;

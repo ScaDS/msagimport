@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package one.p_f.testing.magimport.grouping;
+package org.gradoop.examples.io.mag.magimport.grouping;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,10 +21,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-import one.p_f.testing.magimport.grouping.io.dot.ImprovedDotDataSink;
-import one.p_f.testing.magimport.grouping.aggregation.MapSumAggregator;
-import one.p_f.testing.magimport.grouping.transformation.JoinAttributes;
-import one.p_f.testing.magimport.grouping.transformation.SplitAttributes;
+import org.gradoop.examples.io.mag.magimport.grouping.io.dot.ImprovedDotDataSink;
+import org.gradoop.examples.io.mag.magimport.grouping.aggregation.MapSumAggregator;
+import org.gradoop.examples.io.mag.magimport.grouping.transformation.JoinAttributes;
+import org.gradoop.examples.io.mag.magimport.grouping.transformation.SplitAttributes;
 import org.gradoop.flink.io.api.DataSink;
 import org.gradoop.flink.io.api.DataSource;
 import org.apache.flink.api.java.ExecutionEnvironment;

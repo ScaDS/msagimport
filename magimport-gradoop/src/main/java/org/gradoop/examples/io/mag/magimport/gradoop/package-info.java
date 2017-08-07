@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Philip Fritzsche <p-f@users.noreply.github.com>.
+ * Copyright 2017 TraderJoe95 <johannes.leupold@schie-le.de>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,6 @@
  */
 
 /**
- * Contains a dot data sink that replaces the dot data sink of gradoop.
+ * Package for importing the MS Academic Graph into gradoop.
  */
-package one.p_f.testing.magimport.grouping.io.dot;
+package org.gradoop.examples.io.mag.magimport.gradoop;

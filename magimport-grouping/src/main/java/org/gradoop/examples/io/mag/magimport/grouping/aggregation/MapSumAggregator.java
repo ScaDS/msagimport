@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package one.p_f.testing.magimport.grouping.aggregation;
+package org.gradoop.examples.io.mag.magimport.grouping.aggregation;
 
 import java.util.HashMap;
 import java.util.Map;

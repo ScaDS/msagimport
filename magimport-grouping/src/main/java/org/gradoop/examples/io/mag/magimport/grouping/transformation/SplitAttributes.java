@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package one.p_f.testing.magimport.grouping.transformation;
+package org.gradoop.examples.io.mag.magimport.grouping.transformation;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.gradoop.common.model.impl.pojo.Edge;
 import org.gradoop.common.model.impl.pojo.Vertex;
@@ -28,13 +26,12 @@ import org.gradoop.flink.model.impl.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.transformation.Transformation;
 
 /**
- * Implements a graph transformation to all single attributes to one attribute
- * map. Every attribute is mapped to 1, enabling count aggregating with the
- * {@link MapSumAggregator}.
+ * Implements a graph transformation to convert a map of attributes back to
+ * single attributes.
  *
  * @author TraderJoe95
  */
-public class JoinAttributes {
+public class SplitAttributes {
 
     /**
      * Transformation internally used.
@@ -42,34 +39,48 @@ public class JoinAttributes {
     private final Transformation trans;
 
     /**
-     * Creates a new <code>JoinAttributes</code> instance.
+     * Creates a new <code>SplitAttributes</code> instance.
      *
      * @param propertyKey property key to access map
      */
-    public JoinAttributes(String propertyKey) {
-        // Function that joins the attributes on vertices
+    public SplitAttributes(String propertyKey) {
+        // Function that splits the attribute map on vertices
         TransformationFunction<Vertex> vertexFunc = (c, t) -> {
-            Iterable<String> keys = c.getPropertyKeys();
-            Map<PropertyValue, PropertyValue> joined = new HashMap<>();
-            StreamSupport.stream(keys.spliterator(), false)
-                    .forEach(a -> joined.put(PropertyValue.create(a),
-                            PropertyValue.create(1L)));
+            Properties pOld = c.getProperties();
+            Map<PropertyValue, PropertyValue> joined = pOld.get(propertyKey)
+                    .getMap();
             Properties p = new Properties();
-            p.set(propertyKey, joined);
+            // add all map elements with non empty and non null key
+            joined.keySet().stream().sequential()
+                    .filter((PropertyValue a) -> a != null
+                            && !a.getString().equals(""))
+                    .forEach((PropertyValue a)
+                            -> p.set(a.getString(), joined.get(a).getLong()));
+            // add all other properties
+            StreamSupport.stream(pOld.getKeys().spliterator(), false)
+                    .filter(k -> !k.equals(propertyKey))
+                    .forEach(k -> p.set(k, pOld.get(k)));
             c.setProperties(p);
 
             return c;
         };
 
-        // Function that joins the attributes on edges
+        // Function that splits the attribute map on edges
         TransformationFunction<Edge> edgeFunc = (c, t) -> {
-            Iterable<String> keys = c.getPropertyKeys();
-            Map<PropertyValue, PropertyValue> joined = new HashMap<>();
-            StreamSupport.stream(keys.spliterator(), false)
-                    .forEach(a -> joined.put(PropertyValue.create(a),
-                            PropertyValue.create(1L)));
+            Properties pOld = c.getProperties();
+            Map<PropertyValue, PropertyValue> joined = pOld.get(propertyKey)
+                    .getMap();
             Properties p = new Properties();
-            p.set(propertyKey, joined);
+            // add all map elements with non empty and non null key
+            joined.keySet().stream().sequential()
+                    .filter((PropertyValue a) -> a != null
+                            && !a.getString().equals(""))
+                    .forEach((PropertyValue a)
+                            -> p.set(a.getString(), joined.get(a).getLong()));
+            // add all other properties
+            StreamSupport.stream(pOld.getKeys().spliterator(), false)
+                    .filter(k -> !k.equals(propertyKey))
+                    .forEach(k -> p.set(k, pOld.get(k)));
             c.setProperties(p);
 
             return c;

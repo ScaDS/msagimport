@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package one.p_f.testing.magimport.grouping.io.dot;
+package org.gradoop.examples.io.mag.magimport.grouping.io.dot;
 
 import java.util.Comparator;
 import java.util.regex.Pattern;
@@ -30,7 +30,7 @@ import org.gradoop.flink.representation.transactional.GraphTransaction;
  * will draw properties of vertices and edges as extra dot nodes.
  *
  * @author p-f
- * @see one.p_f.testing.magimport.grouping.io.dot.ImprovedDotDataSink
+ * @see org.gradoop.examples.io.mag.magimport.grouping.io.dot.ImprovedDotDataSink
  */
 public class ImprovedDotFileFormat extends DOTFileFormat {
 

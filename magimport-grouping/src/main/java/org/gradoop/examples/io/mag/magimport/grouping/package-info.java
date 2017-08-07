@@ -17,4 +17,4 @@
 /**
  * Simple graph schema extractor for Gradoop JSON files
  */
-package one.p_f.testing.magimport.grouping;
+package org.gradoop.examples.io.mag.magimport.grouping;
