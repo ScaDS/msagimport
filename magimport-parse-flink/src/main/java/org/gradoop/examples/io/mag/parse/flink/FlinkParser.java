@@ -268,15 +268,7 @@ public class FlinkParser {
     private DataSet<Tuple2<String, Properties>> parseMultiAttributes(
             String tableName, TableSchema schema) {
         return createFromInput(tableName, schema)
-                .map(new MapFunction<MagObject, Tuple2<String, Properties>>() {
-                    @Override
-                    public Tuple2<String, Properties> map(MagObject e) {
-                        return new Tuple2<>(MagUtils
-                                .getByTypeSingle(e, FieldType.KEY)
-                                .orElse(null),
-                                MagUtils.convertAttributes(e));
-                    }
-                })
+                .map(new PropertyExtractMapper())
                 .filter(e -> e.f0 != null)
                 .groupBy(0)
                 .combineGroup(new AttributeGroupCombiner());
@@ -294,4 +286,5 @@ public class FlinkParser {
         return createFromInput(tableName, schema)
                 .flatMap(new NodeFlatMapper());
     }
+
 }
