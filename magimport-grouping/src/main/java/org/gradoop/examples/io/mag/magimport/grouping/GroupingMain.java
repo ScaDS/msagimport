@@ -38,8 +38,6 @@ import org.gradoop.flink.util.GradoopFlinkConfig;
 
 /**
  * Main class grouping the graph.
- *
- * @author TraderJoe95
  */
 public class GroupingMain {
 

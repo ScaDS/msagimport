@@ -24,8 +24,6 @@ import java.util.stream.IntStream;
 
 /**
  * Store the schema of a table (its column names and types.)
- *
- * @author p-f
  */
 public class TableSchema implements Serializable {
 

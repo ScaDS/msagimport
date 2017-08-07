@@ -27,8 +27,6 @@ import org.gradoop.examples.io.mag.magimport.data.TableSchema;
 
 /**
  * Parses a file using a given {@link TableSchema}.
- *
- * @author p-f
  */
 public class TableFileParser implements Runnable {
 

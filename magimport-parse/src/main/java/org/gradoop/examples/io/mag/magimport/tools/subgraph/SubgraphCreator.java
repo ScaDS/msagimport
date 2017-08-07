@@ -32,8 +32,6 @@ import java.util.stream.Stream;
 
 /**
  * Main class for creating the subgraph.
- *
- * @author p-f
  */
 public class SubgraphCreator {
 

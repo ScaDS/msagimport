@@ -28,8 +28,6 @@ import org.gradoop.flink.model.impl.operators.transformation.Transformation;
 /**
  * Implements a graph transformation to convert a map of attributes back to
  * single attributes.
- *
- * @author TraderJoe95
  */
 public class SplitAttributes {
 

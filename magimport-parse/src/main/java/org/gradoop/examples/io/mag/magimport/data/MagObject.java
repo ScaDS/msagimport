@@ -22,8 +22,6 @@ import java.util.logging.Logger;
 
 /**
  * Stores a record parsed from the input data and its schema.
- *
- * @author p-f
  */
 public class MagObject implements Serializable {
 

@@ -19,8 +19,6 @@ import org.gradoop.examples.io.mag.magimport.data.MagObject;
 
 /**
  * Interface to be implemented by classes handling parsed {@link MagObject}s.
- *
- * @author Johannes Leupold
  */
 @FunctionalInterface
 public interface ElementProcessor {

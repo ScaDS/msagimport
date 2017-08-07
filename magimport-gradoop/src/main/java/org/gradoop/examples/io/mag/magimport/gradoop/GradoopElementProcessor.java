@@ -35,8 +35,6 @@ import org.gradoop.flink.io.impl.graph.tuples.ImportVertex;
 
 /**
  * An {@link ElementProcessor} writing the graph to gradoop.
- *
- * @author p-f
  */
 public class GradoopElementProcessor implements ElementProcessor {
 

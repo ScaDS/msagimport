@@ -43,8 +43,6 @@ import org.gradoop.flink.util.GradoopFlinkConfig;
 
 /**
  * Main class, parsing mag csv data to Gradoop JSON files.
- *
- * @author p-f
  */
 public class ImportMain {
 

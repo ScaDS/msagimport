@@ -22,8 +22,6 @@ import org.gradoop.examples.io.mag.magimport.data.TableSchema;
 
 /**
  * Helper class storing the format of the input csv files.
- *
- * @author p-f
  */
 public final class InputSchema {
 
