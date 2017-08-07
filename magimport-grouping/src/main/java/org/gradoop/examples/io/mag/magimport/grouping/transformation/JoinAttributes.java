@@ -1,11 +1,11 @@
-/*
- * Copyright 2017 TraderJoe95 <johannes.leupold@schie-le.de>.
+/**
+ * Copyright 2017 The magimport contributers.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,9 +29,7 @@ import org.gradoop.flink.model.impl.operators.transformation.Transformation;
 /**
  * Implements a graph transformation to all single attributes to one attribute
  * map. Every attribute is mapped to 1, enabling count aggregating with the
- * {@link MapSumAggregator}.
- *
- * @author TraderJoe95
+ * {@link org.gradoop.examples.io.mag.magimport.grouping.aggregation.MapSumAggregator}.
  */
 public class JoinAttributes {
 
@@ -52,7 +50,7 @@ public class JoinAttributes {
             Map<PropertyValue, PropertyValue> joined = new HashMap<>();
             StreamSupport.stream(keys.spliterator(), false)
                     .forEach(a -> joined.put(PropertyValue.create(a),
-                            PropertyValue.create(1L)));
+                    PropertyValue.create(1L)));
             Properties p = new Properties();
             p.set(propertyKey, joined);
             c.setProperties(p);
@@ -66,7 +64,7 @@ public class JoinAttributes {
             Map<PropertyValue, PropertyValue> joined = new HashMap<>();
             StreamSupport.stream(keys.spliterator(), false)
                     .forEach(a -> joined.put(PropertyValue.create(a),
-                            PropertyValue.create(1L)));
+                    PropertyValue.create(1L)));
             Properties p = new Properties();
             p.set(propertyKey, joined);
             c.setProperties(p);
