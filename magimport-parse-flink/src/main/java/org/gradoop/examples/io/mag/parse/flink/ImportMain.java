@@ -18,7 +18,7 @@ package org.gradoop.examples.io.mag.parse.flink;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import one.p_f.testing.magimport.InputSchema;
+import org.gradoop.examples.io.mag.magimport.InputSchema;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;

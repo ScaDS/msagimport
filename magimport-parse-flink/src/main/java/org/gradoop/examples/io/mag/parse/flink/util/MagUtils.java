@@ -18,8 +18,8 @@ package org.gradoop.examples.io.mag.parse.flink.util;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
-import one.p_f.testing.magimport.data.MagObject;
-import one.p_f.testing.magimport.data.TableSchema;
+import org.gradoop.examples.io.mag.magimport.data.MagObject;
+import org.gradoop.examples.io.mag.magimport.data.TableSchema;
 import org.gradoop.common.model.impl.properties.Properties;
 
 /**

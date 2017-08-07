@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package one.p_f.testing.magimport.parse;
+package org.gradoop.examples.io.mag.magimport.parse;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,9 +21,9 @@ import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-import one.p_f.testing.magimport.callback.ElementProcessor;
-import one.p_f.testing.magimport.data.MagObject;
-import one.p_f.testing.magimport.data.TableSchema;
+import org.gradoop.examples.io.mag.magimport.callback.ElementProcessor;
+import org.gradoop.examples.io.mag.magimport.data.MagObject;
+import org.gradoop.examples.io.mag.magimport.data.TableSchema;
 
 /**
  * Parses a file using a given {@link TableSchema}.

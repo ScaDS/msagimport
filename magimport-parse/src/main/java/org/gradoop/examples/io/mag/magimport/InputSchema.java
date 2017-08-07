@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package one.p_f.testing.magimport;
+package org.gradoop.examples.io.mag.magimport;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
-import one.p_f.testing.magimport.data.TableSchema;
+import org.gradoop.examples.io.mag.magimport.data.TableSchema;
 
 /**
  * Helper class storing the format of the input csv files.

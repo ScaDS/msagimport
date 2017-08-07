@@ -16,4 +16,4 @@
 /**
  * Filter raw MAG data to create a subgraph.
  */
-package one.p_f.testing.magimport.tools.subgraph;
+package org.gradoop.examples.io.mag.magimport.tools.subgraph;

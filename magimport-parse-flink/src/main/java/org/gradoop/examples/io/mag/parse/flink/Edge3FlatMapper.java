@@ -16,8 +16,8 @@
 package org.gradoop.examples.io.mag.parse.flink;
 
 import java.io.Serializable;
-import one.p_f.testing.magimport.data.MagObject;
-import one.p_f.testing.magimport.data.TableSchema;
+import org.gradoop.examples.io.mag.magimport.data.MagObject;
+import org.gradoop.examples.io.mag.magimport.data.TableSchema;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
 import org.gradoop.common.model.impl.properties.Properties;

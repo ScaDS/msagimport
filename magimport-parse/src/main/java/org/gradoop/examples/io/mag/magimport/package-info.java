@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Johannes Leupold.
+ * Copyright 2017 TraderJoe95 <johannes.leupold@schie-le.de>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package one.p_f.testing.magimport.callback;
-
-import one.p_f.testing.magimport.data.MagObject;
 
 /**
- * Interface to be implemented by classes handling parsed {@link MagObject}s.
- *
- * @author Johannes Leupold
+ * Main package of the project
  */
-@FunctionalInterface
-public interface ElementProcessor {
-
-    /**
-     * Handle a {@link MagObject}.
-     * 
-     * @param obj Object to handle.
-     */
-    void process(MagObject obj);
-}
+package org.gradoop.examples.io.mag.magimport;

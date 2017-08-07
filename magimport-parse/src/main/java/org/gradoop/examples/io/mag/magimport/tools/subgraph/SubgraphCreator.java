@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package one.p_f.testing.magimport.tools.subgraph;
+package org.gradoop.examples.io.mag.magimport.tools.subgraph;
 
 import java.io.IOException;
 import java.nio.file.Files;

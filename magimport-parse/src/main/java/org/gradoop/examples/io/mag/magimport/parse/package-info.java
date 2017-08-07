@@ -17,4 +17,4 @@
 /**
  * Contains runnable parser for the MagGraph.
  */
-package one.p_f.testing.magimport.parse;
+package org.gradoop.examples.io.mag.magimport.parse;

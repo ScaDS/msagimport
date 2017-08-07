@@ -17,4 +17,4 @@
 /**
  * Contains schema and data object classes.
  */
-package one.p_f.testing.magimport.data;
+package org.gradoop.examples.io.mag.magimport.data;

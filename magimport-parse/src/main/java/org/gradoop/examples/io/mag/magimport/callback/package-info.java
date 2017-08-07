@@ -17,4 +17,4 @@
 /**
  * Contains callback interface for processing parsed <code>MagObject</code>s.
  */
-package one.p_f.testing.magimport.callback;
+package org.gradoop.examples.io.mag.magimport.callback;
