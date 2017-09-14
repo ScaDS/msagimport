@@ -69,8 +69,13 @@ public class AttributeGroupCombiner implements
      */
     public static PropertyValue combine(PropertyValue first,
             PropertyValue second) {
-        List<PropertyValue> values = first.isList() ? first.getList()
-                : new ArrayList<>();
+        List<PropertyValue> values;
+        if (first.isList()) {
+            values = first.getList();
+        } else {
+            values = new ArrayList<>();
+            values.add(first);
+        }
         if (second.isList()) {
             values.addAll(second.getList());
         } else {
