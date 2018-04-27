@@ -55,6 +55,8 @@ public class ImportMain {
         cliOptions.addOption("h", "help", false, "Show this help.");
         cliOptions.addRequiredOption("i", "input", true, "Input path.");
         cliOptions.addRequiredOption("o", "output", true, "Output path.");
+        cliOptions.addOption("l", "force-local", false,
+                "Enforce the use of local ExecutionEnvironment");
         CommandLine cliConfig;
         try {
             cliConfig = new DefaultParser().parse(cliOptions, args);
@@ -70,10 +72,10 @@ public class ImportMain {
         }
         String inPath = cliConfig.getOptionValue('i');
         Path outPath = new Path(cliConfig.getOptionValue('o'));
-        ExecutionEnvironment localEnv = ExecutionEnvironment
-                .createLocalEnvironment();
+        ExecutionEnvironment env = cliConfig.hasOption('l') ? ExecutionEnvironment.createLocalEnvironment() :
+                ExecutionEnvironment.getExecutionEnvironment();
         FlinkParser parser
-                = new FlinkParser(inPath, localEnv, InputSchema.get());
+                = new FlinkParser(inPath, env, InputSchema.get());
         DataSet<ImportVertex<String>> vertices;
         DataSet<ImportEdge<String>> edges;
         try {
@@ -83,7 +85,7 @@ public class ImportMain {
             LOG.log(Level.SEVERE, "Parsing failed.", mpe);
             return;
         }
-        GradoopFlinkConfig config = GradoopFlinkConfig.createConfig(localEnv);
+        GradoopFlinkConfig config = GradoopFlinkConfig.createConfig(env);
         DataSource source = new GraphDataSource(vertices, edges, config);
         LogicalGraph graph;
         try {
@@ -100,7 +102,7 @@ public class ImportMain {
             return;
         }
         try {
-            localEnv.execute("ImportGraph");
+            env.execute("MAG Import");
         } catch (Exception ex) {
             LOG.log(Level.SEVERE, "Execution failed.", ex);
             throw new RuntimeException(ex);

@@ -5,7 +5,7 @@ A generic parser for Microsoft Academic Graph. You have to supply a callback cla
 Also contains a tool to create a subgraph of MAG by filtering certain tables.
 
 #### Important classes
-All of the following classes are in package `one.p_f.testing.magimport`.
+All of the following classes are in package `org.gradoop.examples.io.mag.magimport`.
 * `data.MagObject`: An object containing a parsed structure from the graph. It can be an edge or a node. All attributes are stored in a string array.
 * `data.TableSchema`: Describes the structure of one MAG TSV file. Contains a list of all columns and column types. Can be created via `data.TableSchema.Builder`.
 * `callback.ElementProcessor`: The callback interface for processing parsed data.
@@ -14,7 +14,7 @@ All of the following classes are in package `one.p_f.testing.magimport`.
 An implementation of the `magimport-parse` callback interface. Parses the input files via `magimport-parse` and saves the results in the Gradoop JSON file format.
 
 #### Important classes
-All of the following classes are in package `one.p_f.testing.magimport.gradoop`.
+All of the following classes are in package `org.gradoop.examples.io.mag.magimport.gradoop`.
 * `GradoopElementProcessor`: Implementation of the `magimport-parse` callback interface.
 
 ### magimport-grouping
@@ -23,7 +23,7 @@ Loads a Gradoop logical graph from the Gradoop JSON file format and uses the `gr
 ## Usage
 ### Step 0: Create a subgraph (OPTIONAL)
 ```
-java one.p_f.testing.magimport.tools.subgraph.SubgraphCreator <input path> <output path> <filter>
+java org.gradoop.examples.io.mag.magimport.tools.subgraph.SubgraphCreator <input path> <output path> <filter>
 ```
 The **`input path`** should be the path containing the MAG TSV files.
 
@@ -33,7 +33,7 @@ The **`filter`** is a string searched in the `Affiliations` table (case insensit
 
 ### Step 1: Parse and import graph
 ```
-java one.p_f.testing.magimport.gradoop.ImportMain <input path> <output path> [<parse limit>]
+java org.gradoop.examples.io.mag.magimport.gradoop.ImportMain <input path> <output path> [<parse limit>]
 ```
 The **`input path`** should be the path containing the extracted MAG TSV files.
 
@@ -43,7 +43,7 @@ The **`parse limit`** limits how many lines per TSV File get parsed. This value 
 
 ### Step 2: Group graph
 ```
-java one.p_f.testing.magimport.grouping.GroupingMain <input path> <output path>
+java org.gradoop.examples.io.mag.magimport.grouping.GroupingMain <input path> <output path>
 ```
 The **`input path`** should be the output path from step 1 (containing the JSON Files).
 

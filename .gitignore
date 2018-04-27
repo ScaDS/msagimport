@@ -5,3 +5,4 @@ target
 .classpath
 .project
 org.eclipse.*
+.idea*
