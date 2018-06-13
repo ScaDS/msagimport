@@ -33,7 +33,7 @@
                                     <include>org.abego.treelayout:*</include>
                                     <include>org.codehaus.jettison:*</include>
                                     <include>stax:*</include>
-                                    <include>org.mongodb:mongo-java-driver</include>
+                                    <include>org.mongodb:bson</include>
                                     <include>javax.*:*</include>
                                     <include>com.google.guava:guava</include>
                                     <include>commons-cli:commons-cli</include>
@@ -134,7 +134,7 @@
         <dependency>
             <groupId>org.gradoop</groupId>
             <artifactId>gradoop-flink</artifactId>
-            <version>0.3.2</version>
+            <version>0.3.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.gradoop</groupId>
