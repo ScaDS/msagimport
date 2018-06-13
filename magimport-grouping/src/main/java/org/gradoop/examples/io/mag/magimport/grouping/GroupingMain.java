@@ -1,12 +1,12 @@
 /**
  * Copyright 2017 The magimport contributers.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,19 +15,21 @@
  */
 package org.gradoop.examples.io.mag.magimport.grouping;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.commons.cli.*;
 import org.gradoop.examples.io.mag.magimport.grouping.aggregation.MapSumAggregator;
 import org.gradoop.examples.io.mag.magimport.grouping.transformation.JoinAttributes;
 import org.gradoop.examples.io.mag.magimport.grouping.transformation.SplitAttributes;
-import org.gradoop.flink.io.api.DataSink;
 import org.gradoop.flink.io.api.DataSource;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.gradoop.flink.io.impl.dot.DOTDataSink;
+import org.gradoop.flink.io.impl.json.JSONDataSink;
 import org.gradoop.flink.io.impl.json.JSONDataSource;
 import org.gradoop.flink.model.api.epgm.LogicalGraph;
 import org.gradoop.flink.model.impl.operators.grouping.Grouping;
@@ -50,26 +52,34 @@ public class GroupingMain {
     /**
      * Main method, reading the graph, grouping it, writing the result to disk.
      *
-     * @param args Usage: INPUTPATH OUTPUTPATH
-     * @throws Exception I dont know ask the developer?
+     * @param args Use {@code --help} to check usage.
+     * @throws Exception If the execution fails.
      */
     public static void main(final String[] args) throws Exception {
-        // TODO: Improve argument handling.
-        String inputPath = args[0];
-        String outputPath = args[1];
-
-        Path outPath = Paths.get(outputPath);
-        if (outPath.toFile().isFile()) {
-            System.err.println("Output path is file.");
-            System.out.println("Usage: ImportMain INPATH OUTPATH");
+        Options cliOptions = new Options();
+        cliOptions.addOption("h", "help", false, "Show this help.");
+        cliOptions.addRequiredOption("i", "input", true, "Input path.");
+        cliOptions.addRequiredOption("o", "output", true, "Output path.");
+        cliOptions.addOption("d", "dot-output", true, "Output dot file.");
+        cliOptions.addOption("l", "force-local", false,
+                "Enforce the use of local ExecutionEnvironment");
+        CommandLine cliConfig;
+        try {
+            cliConfig = new DefaultParser().parse(cliOptions, args);
+        } catch (ParseException ex) {
+            LOG.log(Level.SEVERE, "Failed to parse command line options: {0}",
+                    ex.getMessage());
+            showHelp(cliOptions);
             return;
-        } else if (!outPath.toFile().exists()) {
-            LOG.info("Creating output directory " + outPath.toString());
-            outPath.toFile().mkdirs();
         }
-
-        ExecutionEnvironment env = ExecutionEnvironment
-                .getExecutionEnvironment();
+        if (cliConfig.hasOption('h')) {
+            showHelp(cliOptions);
+            return;
+        }
+        String inputPath = cliConfig.getOptionValue('i');
+        String outPath = cliConfig.getOptionValue('o');
+        ExecutionEnvironment env = cliConfig.hasOption('l') ? ExecutionEnvironment.createLocalEnvironment() :
+                ExecutionEnvironment.getExecutionEnvironment();
 
         // instantiate a default gradoop config
         GradoopFlinkConfig config = GradoopFlinkConfig.createConfig(env);
@@ -102,11 +112,21 @@ public class GroupingMain {
         SplitAttributes splitter = new SplitAttributes("attributesAgg");
         schema = splitter.execute(schema);
 
-        // instantiate a data sink for the DOT format
-        DataSink dataSink = new DOTDataSink(outputPath, false);
-        dataSink.write(schema, true);
+        schema.writeTo(new JSONDataSink(outPath, config));
+        if (cliConfig.hasOption('d')) {
+            schema.writeTo(new DOTDataSink(cliConfig.getOptionValue('d'), false));
+        }
 
         // run the job
-        env.execute();
+        env.execute("Graph Grouping (Schema Graph Extraction)");
+    }
+
+    /**
+     * Helper method showing help.
+     *
+     * @param o Options to generate help from.
+     */
+    private static void showHelp(Options o) {
+        new HelpFormatter().printHelp("java ImportMain", o, true);
     }
 }
